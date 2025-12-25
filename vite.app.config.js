@@ -4,6 +4,10 @@ import macros from "vite-plugin-babel-macros"
 import react from "@vitejs/plugin-react"
 
 export default defineConfig({
+  server: {
+    port: 7000,
+  },
+
   resolve: {
     alias: {
       "~": path.resolve(__dirname, "./app"),
