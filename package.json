@@ -1,7 +1,7 @@
 {
-  "description": "Universe simulation model for the Starsheet game",
+  "description": "Baryon: Spreadsheets in Space",
   "type": "module",
-  "name": "starsheet",
+  "name": "baryon",
   "version": "0.1.0",
   "license": "UNLICENSED",
   "dependencies": {

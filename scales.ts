@@ -1,15 +1,15 @@
-import { WEB_SCALE_FATES } from "./WEB_SCALE_FATES";
-import { GROUP_SCALE_FATES } from "./GROUP_SCALE_FATES";
-import { CLUSTER_SCALE_FATES } from "./CLUSTER_SCALE_FATES";
-import { GALACTIC_SCALE_FATES } from "./GALACTIC_SCALE_FATES";
-import { STELLAR_SCALE_FATES } from "./STELLAR_SCALE_FATES";
+import { WEB_SCALE_FATES } from "./WEB_SCALE_FATES"
+import { GROUP_SCALE_FATES } from "./GROUP_SCALE_FATES"
+import { CLUSTER_SCALE_FATES } from "./CLUSTER_SCALE_FATES"
+import { GALACTIC_SCALE_FATES } from "./GALACTIC_SCALE_FATES"
+import { STELLAR_SCALE_FATES } from "./STELLAR_SCALE_FATES"
 
 /**
- * STARSHEET — A UNIVERSE SIMULATION MODEL
- * ========================================
+ * BARYON — A UNIVERSE SIMULATION MODEL
+ * ====================================
  *
  * This project defines a model for simulating the universe at multiple scales,
- * intended to drive a space sandbox game called "Starsheet".
+ * intended to drive a space sandbox game called "Baryon".
  *
  * ─────────────────────────────────────────────────────────────────────────────
  * THE GAME
@@ -197,8 +197,8 @@ export const SCALES = {
   // AU1: {
   //   fates: { PLANETARY_SCALE_FATES }
   // }
-};
+}
 
-export type ScaleKey = keyof typeof SCALES;
+export type ScaleKey = keyof typeof SCALES
 
-export type Coordinates = Partial<Record<ScaleKey, [number, number]>>;
+export type Coordinates = Partial<Record<ScaleKey, [number, number]>>

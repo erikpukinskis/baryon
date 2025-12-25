@@ -4,6 +4,6 @@ import { render } from "react-dom"
 import * as HomePage from "./HomePage.docs"
 
 render(
-  <DocsApp logo="Starsheet" docs={[HomePage]} />,
+  <DocsApp logo="Baryon" docs={[HomePage]} />,
   document.getElementById("root")
 )
