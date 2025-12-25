@@ -1,0 +1,46 @@
+{
+  "description": "Universe simulation model for the Starsheet game",
+  "type": "module",
+  "name": "starsheet",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.1",
+    "@types/node": "16.18.8",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@typescript-eslint/eslint-plugin": "5.46.0",
+    "@typescript-eslint/parser": "^8.50.1",
+    "@vitejs/plugin-react": "^5.1.2",
+    "codedocs": "^0.18.0",
+    "eslint": "8.29.0",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "7.31.11",
+    "jsdom": "^27.3.0",
+    "prettier": "2.8.1",
+    "react-router-dom": "^7.11.0",
+    "tsx": "^4.0.0",
+    "typescript": "4.9.4",
+    "vite": "^7.3.0",
+    "vite-plugin-babel-macros": "^1.0.6",
+    "vitest": "^4.0.16"
+  },
+  "scripts": {
+    "all": "yarn && yarn fix && yarn check:types && yarn test && echo `echo 8J+OiSBEaWQgYWxs | base64 -d`",
+    "check:format": "prettier --check --ignore-path .gitignore .",
+    "check:lint": "eslint --ignore-path .gitignore --no-error-on-unmatched-pattern .; if [ $? -eq 0 ]; then echo 8J+OiSBObyBsaW50IGluIHRoaXMgY29kZSEKCg== | base64 -d; else exit 1; fi",
+    "check:types": "tsc --noEmit -p tsconfig.json; if [ $? -eq 0 ]; then echo 8J+OiSBUeXBlcyBhcmUgZ29vZCEKCg== | base64 -d; else exit 1; fi",
+    "confgen": "npx confgen@latest @app react vite vitest typescript yarn eslint prettier githubActions start",
+    "fix": "yarn fix:lint && yarn fix:format",
+    "fix:format": "prettier --write --ignore-path .gitignore .",
+    "fix:lint": "eslint --ignore-path .gitignore --no-error-on-unmatched-pattern . --fix; if [ $? -eq 0 ]; then echo 8J+OiSBObyBsaW50IGluIHRoaXMgY29kZSEKCg== | base64 -d; else exit 1; fi",
+    "start:app:dev": "vite serve app --config vite.app.config.js",
+    "test": "vitest run --config vite.test.config.js",
+    "watch:test": "vitest watch --config vite.test.config.js"
+  }
+}
