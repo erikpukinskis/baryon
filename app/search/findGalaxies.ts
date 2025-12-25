@@ -71,13 +71,17 @@
  *   - [ ] Observation revision when needed
  */
 
-import { Coordinates, ScaleKey } from "./scales";
-import { GALACTIC_SCALE_FATES } from "./GALACTIC_SCALE_FATES";
-import { GROUP_SCALE_FATES } from "./GROUP_SCALE_FATES";
-import { perlin2d, computeThresholds, sampleFromThresholds } from "./noise";
+import { Coordinates, ScaleKey } from "../model/scales"
+import { GALACTIC_SCALE_FATES } from "../model/GALACTIC_SCALE_FATES"
+import { GROUP_SCALE_FATES } from "../model/GROUP_SCALE_FATES"
+import {
+  perlin2d,
+  computeThresholds,
+  sampleFromThresholds,
+} from "../helpers/noise"
 
-type GalacticFateKey = keyof typeof GALACTIC_SCALE_FATES;
-type GroupFateKey = keyof typeof GROUP_SCALE_FATES;
+type GalacticFateKey = keyof typeof GALACTIC_SCALE_FATES
+type GroupFateKey = keyof typeof GROUP_SCALE_FATES
 
 /**
  * Fates that count as "real galaxies" (not just diffuse halos).
@@ -94,7 +98,7 @@ const GALAXY_FATES: GalacticFateKey[] = [
   "ellipticalGalaxy",
   "activeGalactic",
   "quenchedRemnant",
-];
+]
 
 /**
  * An observation records the fate of a parcel at specific coordinates.
@@ -103,22 +107,22 @@ const GALAXY_FATES: GalacticFateKey[] = [
  * observations of child or sibling parcels are conditioned on this result.
  */
 type Observation = {
-  coordinates: Coordinates;
-  scale: ScaleKey;
-  fate: string;
-  mass?: number; // solar masses (if applicable)
-  seed: number; // the deterministic seed used for this observation
-};
+  coordinates: Coordinates
+  scale: ScaleKey
+  fate: string
+  mass?: number // solar masses (if applicable)
+  seed: number // the deterministic seed used for this observation
+}
 
 type FindGalaxiesArgs = {
-  limit: number;
-  universeSeed?: number;
-};
+  limit: number
+  universeSeed?: number
+}
 
 type FindGalaxiesResult = {
-  observations: Observation[];
-  galaxies: Coordinates[];
-};
+  observations: Observation[]
+  galaxies: Coordinates[]
+}
 
 /**
  * Makes observations of the universe until it finds a certain number of galaxies.
@@ -137,35 +141,35 @@ export function findGalaxies({
   limit,
   universeSeed = 42,
 }: FindGalaxiesArgs): FindGalaxiesResult {
-  const observations: Observation[] = [];
-  const galaxies: Coordinates[] = [];
+  const observations: Observation[] = []
+  const galaxies: Coordinates[] = []
 
-  let attempts = 0;
-  const maxAttempts = limit * 100; // avoid infinite loops
+  let attempts = 0
+  const maxAttempts = limit * 100 // avoid infinite loops
 
   while (galaxies.length < limit && attempts < maxAttempts) {
-    attempts++;
+    attempts++
 
     // Generate coordinates at each scale, drilling down from Mpc10 to kpc100
-    const coords = generateRandomCoordinates(universeSeed + attempts);
+    const coords = generateRandomCoordinates(universeSeed + attempts)
 
     // Observe the kpc100 parcel - what galactic fate is there?
-    const galacticFate = observeGalacticFate(coords, universeSeed);
+    const galacticFate = observeGalacticFate(coords, universeSeed)
 
     observations.push({
       coordinates: coords,
       scale: "kpc100",
       fate: galacticFate,
       seed: computeSeed(coords, universeSeed),
-    });
+    })
 
     // Is this a galaxy?
     if (GALAXY_FATES.includes(galacticFate as GalacticFateKey)) {
-      galaxies.push(coords);
+      galaxies.push(coords)
     }
   }
 
-  return { observations, galaxies };
+  return { observations, galaxies }
 }
 
 /**
@@ -187,20 +191,20 @@ function generateRandomCoordinates(seed: number): Coordinates {
       Math.floor(seededRandom(seed + 4) * 10),
       Math.floor(seededRandom(seed + 5) * 10),
     ],
-  };
+  }
 }
 
 /**
  * Compute a deterministic seed for a given set of coordinates.
  */
 function computeSeed(coords: Coordinates, universeSeed: number): number {
-  let hash = universeSeed;
+  let hash = universeSeed
   for (const [scale, [x, y]] of Object.entries(coords)) {
-    hash = hash * 31 + x;
-    hash = hash * 31 + y;
-    hash = hash * 31 + scale.length; // incorporate scale name
+    hash = hash * 31 + x
+    hash = hash * 31 + y
+    hash = hash * 31 + scale.length // incorporate scale name
   }
-  return hash;
+  return hash
 }
 
 /**
@@ -208,8 +212,8 @@ function computeSeed(coords: Coordinates, universeSeed: number): number {
  * Used for generating search coordinates, not for fate sampling.
  */
 function seededRandom(seed: number): number {
-  const x = Math.sin(seed * 9999) * 10000;
-  return x - Math.floor(x);
+  const x = Math.sin(seed * 9999) * 10000
+  return x - Math.floor(x)
 }
 
 /**
@@ -224,20 +228,18 @@ function observeGroupFate(
   coords: Coordinates,
   universeSeed: number
 ): GroupFateKey {
-  const mpc1 = coords.Mpc1;
-  const mpc10 = coords.Mpc10;
+  const mpc1 = coords.Mpc1
+  const mpc10 = coords.Mpc10
 
   if (!mpc1 || !mpc10) {
-    throw new Error(
-      "Mpc1 and Mpc10 coordinates required to observe group fate"
-    );
+    throw new Error("Mpc1 and Mpc10 coordinates required to observe group fate")
   }
 
   // Compute a seed for this Mpc1 tile based on its absolute position
-  const tileSeed = universeSeed + mpc10[0] * 1000 + mpc10[1] * 100;
+  const tileSeed = universeSeed + mpc10[0] * 1000 + mpc10[1] * 100
 
   // Sample Perlin noise at the Mpc1 position within the Mpc10 tile
-  const noiseValue = perlin2d(mpc1[0], mpc1[1], tileSeed);
+  const noiseValue = perlin2d(mpc1[0], mpc1[1], tileSeed)
 
   // For now, use uniform weights across all group fates
   // TODO: Get weights from parent (web-scale) fate
@@ -248,10 +250,10 @@ function observeGroupFate(
     gasPoorGroup: 0.15,
     fossilGroup: 0.1,
     infallingGroup: 0.1,
-  };
+  }
 
-  const { keys, thresholds } = computeThresholds(uniformWeights);
-  return sampleFromThresholds(noiseValue, keys, thresholds);
+  const { keys, thresholds } = computeThresholds(uniformWeights)
+  return sampleFromThresholds(noiseValue, keys, thresholds)
 }
 
 /**
@@ -270,24 +272,24 @@ function observeGalacticFate(
   coords: Coordinates,
   universeSeed: number
 ): GalacticFateKey {
-  const kpc100 = coords.kpc100;
-  const mpc1 = coords.Mpc1;
-  const mpc10 = coords.Mpc10;
+  const kpc100 = coords.kpc100
+  const mpc1 = coords.Mpc1
+  const mpc10 = coords.Mpc10
 
   if (!kpc100 || !mpc1 || !mpc10) {
-    throw new Error("All coordinates required to observe galactic fate");
+    throw new Error("All coordinates required to observe galactic fate")
   }
 
   // First, observe the parent's fate
-  const parentFate = observeGroupFate(coords, universeSeed);
-  const parentCharacteristics = GROUP_SCALE_FATES[parentFate];
+  const parentFate = observeGroupFate(coords, universeSeed)
+  const parentCharacteristics = GROUP_SCALE_FATES[parentFate]
 
   // Get the parent's childFateWeights
-  const weights = parentCharacteristics.childFateWeights;
+  const weights = parentCharacteristics.childFateWeights
 
   if (!weights || Object.keys(weights).length === 0) {
     // Fallback: if no weights defined, use uniform distribution
-    return "diffuseHalo";
+    return "diffuseHalo"
   }
 
   // Compute a seed for this Mpc1 tile (for the galactic-scale noise field)
@@ -297,12 +299,12 @@ function observeGalacticFate(
     mpc10[0] * 10000 +
     mpc10[1] * 1000 +
     mpc1[0] * 100 +
-    mpc1[1];
+    mpc1[1]
 
   // Sample Perlin noise at the kpc100 position within the Mpc1 tile
-  const noiseValue = perlin2d(kpc100[0], kpc100[1], tileSeed);
+  const noiseValue = perlin2d(kpc100[0], kpc100[1], tileSeed)
 
   // Convert weights to thresholds and sample
-  const { keys, thresholds } = computeThresholds(weights);
-  return sampleFromThresholds(noiseValue, keys, thresholds) as GalacticFateKey;
+  const { keys, thresholds } = computeThresholds(weights)
+  return sampleFromThresholds(noiseValue, keys, thresholds) as GalacticFateKey
 }
