@@ -1,11 +1,18 @@
 import path from "path"
 import { defineConfig } from "vite"
-import macros from "vite-plugin-babel-macros"
 import react from "@vitejs/plugin-react"
+
+const inCodespace = Boolean(process.env.GITHUB_CODESPACE_TOKEN)
 
 export default defineConfig({
   server: {
-    port: 7000,
+    ...(inCodespace
+      ? {
+          hmr: {
+            port: 443,
+          },
+        }
+      : {}),
   },
 
   resolve: {
@@ -14,7 +21,7 @@ export default defineConfig({
     },
   },
 
-  plugins: [macros(), react()],
+  plugins: [react()],
 
   build: {
     rollupOptions: {},
