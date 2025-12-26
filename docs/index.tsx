@@ -1,9 +1,11 @@
-import { DocsApp } from "codedocs"
+import { DocsApp } from "codedocs/macro"
+import "codedocs/style.css"
 import React from "react"
 import { render } from "react-dom"
-import * as HomePage from "./HomePage.docs"
+import { HomePageDocs } from "./HomePage.docs"
+import { MapDocs } from "~/components/Map.docs"
 
 render(
-  <DocsApp logo="Baryon" docs={[HomePage]} />,
+  <DocsApp icon="rocket" logo="Baryon" docs={[HomePageDocs, MapDocs]} />,
   document.getElementById("root")
 )

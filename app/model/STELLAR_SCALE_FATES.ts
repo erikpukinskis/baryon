@@ -9,14 +9,14 @@ type Elem =
   | "Si"
   | "S"
   | "Fe"
-  | "Ni";
+  | "Ni"
 
 type SupportType =
   | "thermalGas" // kinetic pressure from thermal motion; gas giant envelopes
   | "degeneracy" // quantum Pauli exclusion; brown/white dwarfs, neutron stars, PMOs
   | "nuclear" // fusion regulates contraction; main sequence stars
   | "material" // EM bonds / lattice strength; planets, rocky cores
-  | "gravity"; // self-gravity; contributes to PMOs, sole support for black holes
+  | "gravity" // self-gravity; contributes to PMOs, sole support for black holes
 
 type StellarScaleFateKey =
   | "gasCloud"
@@ -30,23 +30,23 @@ type StellarScaleFateKey =
   | "whiteDwarf"
   | "neutronStar"
   | "blackHole"
-  | "noRemnant";
+  | "noRemnant"
 
 type StellarScaleFateLock =
   | "stablePressureMaximum"
   | "fusionIgnition"
   | "degeneracyDominance"
   | "eventHorizon"
-  | "totalDisruption";
+  | "totalDisruption"
 
 type StellarScaleFateCharacteristics = {
-  massMax: number;
-  elementsProduced: Elem[];
-  support: SupportType[] | false;
+  massMax: number
+  elementsProduced: Elem[]
+  support: SupportType[] | false
 
-  fateLockedBy: StellarScaleFateLock | false;
-  allowedTransitions: string[];
-};
+  fateLockedBy: StellarScaleFateLock | false
+  allowedTransitions: string[]
+}
 
 /**
  * PARCEL_FATES
@@ -149,7 +149,10 @@ type StellarScaleFateCharacteristics = {
  * not as passive labels. This keeps the model aligned with real physical thresholds rather than
  * observational taxonomy.
  */
-export const STELLAR_SCALE_FATES: Record<StellarScaleFateKey, StellarScaleFateCharacteristics> = {
+export const STELLAR_SCALE_FATES: Record<
+  StellarScaleFateKey,
+  StellarScaleFateCharacteristics
+> = {
   plasmaReservoir: {
     massMax: Infinity,
     elementsProduced: [],
@@ -245,4 +248,4 @@ export const STELLAR_SCALE_FATES: Record<StellarScaleFateKey, StellarScaleFateCh
     fateLockedBy: "totalDisruption",
     allowedTransitions: [],
   },
-};
+}

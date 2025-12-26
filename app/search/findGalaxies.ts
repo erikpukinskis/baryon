@@ -2,7 +2,8 @@
  * OBSERVATION-BASED UNIVERSE QUERIES
  * ===================================
  *
- * This module implements the **sparse observation model** described in scales.ts.
+ * This module implements the **sparse observation model** described in
+ * ~/model.
  *
  * The key insight is that we don't simulate the entire universe up front.
  * Instead, we make **observations** that collapse probability distributions
@@ -15,8 +16,8 @@
  *
  *   (coordinates, seed) → fate
  *
- * Given the same coordinates and seed, the same fate is always returned.
- * This makes the simulation **deterministic and reproducible**.
+ * Given the same coordinates and seed, the same fate is always returned. This
+ * makes the simulation **deterministic and reproducible**.
  *
  * Observations are **hierarchical**. To observe a parcel at scale N, you may
  * need to first observe its parent at scale N-1, because the parent's fate
@@ -27,14 +28,12 @@
  *
  * Constraints flow **both directions** in the hierarchy:
  *
- * **Top-down** (parent → child):
- *   The parent's `childFateWeights` define a prior distribution over child
- *   fates. A fossil group favors elliptical galaxies.
+ * **Top-down** (parent → child): The parent's `childFateWeights` define a prior
+ *   distribution over child fates. A fossil group favors elliptical galaxies.
  *
- * **Bottom-up** (child → parent):
- *   If we observe children before the parent, those observations constrain
- *   what parent fates are plausible. Five spirals in a tile? Probably not
- *   a fossil group.
+ * **Bottom-up** (child → parent): If we observe children before the parent,
+ *   those observations constrain what parent fates are plausible. Five spirals
+ *   in a tile? Probably not a fossil group.
  *
  * This bidirectionality means we're not just sampling—we're solving for a
  * consistent configuration across scales. The sample space is not "individual
@@ -71,14 +70,14 @@
  *   - [ ] Observation revision when needed
  */
 
-import { Coordinates, ScaleKey } from "../model/scales"
-import { GALACTIC_SCALE_FATES } from "../model/GALACTIC_SCALE_FATES"
-import { GROUP_SCALE_FATES } from "../model/GROUP_SCALE_FATES"
 import {
   perlin2d,
   computeThresholds,
   sampleFromThresholds,
-} from "../helpers/noise"
+} from "~/helpers/noise"
+import type { Coordinates, ScaleKey } from "~/model"
+import type { GALACTIC_SCALE_FATES } from "~/model/GALACTIC_SCALE_FATES"
+import { GROUP_SCALE_FATES } from "~/model/GROUP_SCALE_FATES"
 
 type GalacticFateKey = keyof typeof GALACTIC_SCALE_FATES
 type GroupFateKey = keyof typeof GROUP_SCALE_FATES
@@ -164,7 +163,7 @@ export function findGalaxies({
     })
 
     // Is this a galaxy?
-    if (GALAXY_FATES.includes(galacticFate as GalacticFateKey)) {
+    if (GALAXY_FATES.includes(galacticFate)) {
       galaxies.push(coords)
     }
   }

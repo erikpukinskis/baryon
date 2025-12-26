@@ -1,24 +1,23 @@
-
 type BaryonicCoolingFateKey =
   | "radiationCoupled"
   | "acousticFluid"
   | "recombinedGas"
   | "noCooling"
   | "popIIIStarFormation"
-  | "metalCooling";
+  | "metalCooling"
 
 type BaryometricCharacteristics = {
-  minTemperature?: number; // K
-  maxTemperature?: number; // K
-  freeElectronAbundance?: number; // electrons per baryon
-  thomsonToExpansionRatio?: number; // Γ_T / H
-  h2Fraction?: number; // H₂ per H
-  metallicity?: number; // Z / Z☉
-  requiresDarkMatterHalo?: boolean;
-  canGravitate?: boolean;
-  primordialLithiumPreserved?: boolean;
-  lithiumDestroyed?: boolean;
-};
+  minTemperature?: number // K
+  maxTemperature?: number // K
+  freeElectronAbundance?: number // electrons per baryon
+  thomsonToExpansionRatio?: number // Γ_T / H
+  h2Fraction?: number // H₂ per H
+  metallicity?: number // Z / Z☉
+  requiresDarkMatterHalo?: boolean
+  canGravitate?: boolean
+  primordialLithiumPreserved?: boolean
+  lithiumDestroyed?: boolean
+}
 
 /**
  * BARYON_COOLING_FATES
@@ -110,7 +109,10 @@ type BaryometricCharacteristics = {
  *   cooling decides *whether* collapse is possible;
  *   fate decides *what kind* of object results.
  */
-const BARYON_COOLING_FATES: Record<BaryonicCoolingFateKey, BaryometricCharacteristics> = {
+export const BARYON_COOLING_FATES: Record<
+  BaryonicCoolingFateKey,
+  BaryometricCharacteristics
+> = {
   radiationCoupled: {
     minTemperature: 1e6,
     freeElectronAbundance: 1.0,
@@ -159,4 +161,4 @@ const BARYON_COOLING_FATES: Record<BaryonicCoolingFateKey, BaryometricCharacteri
     canGravitate: true,
     lithiumDestroyed: true,
   },
-};
+}

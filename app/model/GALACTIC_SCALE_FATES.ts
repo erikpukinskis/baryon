@@ -6,16 +6,16 @@ type GalacticScaleFateKey =
   | "lenticularGalaxy"
   | "ellipticalGalaxy"
   | "activeGalactic"
-  | "quenchedRemnant";
+  | "quenchedRemnant"
 
 type GalacticLock =
   | "diskFormation" // angular momentum settled into stable disk
   | "morphologicalQuenching" // structure prevents further star formation
   | "mergerDisruption" // major merger destroys disk, forms elliptical
   | "ageFading" // passive evolution, no gas left
-  | false;
+  | false
 
-type GasRichness = "high" | "moderate" | "low" | "negligible";
+type GasRichness = "high" | "moderate" | "low" | "negligible"
 
 /**
  * Stellar fate keys, imported conceptually for type reference.
@@ -33,23 +33,23 @@ type StellarScaleFateKey =
   | "whiteDwarf"
   | "neutronStar"
   | "blackHole"
-  | "noRemnant";
+  | "noRemnant"
 
 type GalacticScaleCharacteristics = {
-  stellarMassMin: number; // M☉
-  stellarMassMax: number; // M☉
+  stellarMassMin: number // M☉
+  stellarMassMax: number // M☉
 
-  centralBlackHoleMass: [number, number]; // [min, max] in M☉, or [0, 0] for none
-  gasRichness: GasRichness;
-  starFormationActive: boolean;
+  centralBlackHoleMass: [number, number] // [min, max] in M☉, or [0, 0] for none
+  gasRichness: GasRichness
+  starFormationActive: boolean
 
-  dominantStellarPopulation: "young" | "mixed" | "old";
+  dominantStellarPopulation: "young" | "mixed" | "old"
 
-  fateLockedBy: GalacticLock;
-  typicalTimescaleGyr: number;
+  fateLockedBy: GalacticLock
+  typicalTimescaleGyr: number
 
-  definingProcesses: string[];
-  allowedTransitions: GalacticScaleFateKey[];
+  definingProcesses: string[]
+  allowedTransitions: GalacticScaleFateKey[]
 
   /**
    * CHILD FATE WEIGHTS (Cross-Scale Constraints)
@@ -76,8 +76,8 @@ type GalacticScaleCharacteristics = {
    *
    * See GROUP_SCALE_FATES.ts for detailed documentation on this pattern.
    */
-  childFateWeights?: Partial<Record<StellarScaleFateKey, number>>;
-};
+  childFateWeights?: Partial<Record<StellarScaleFateKey, number>>
+}
 
 /**
  * GALACTIC_SCALE_FATES
@@ -436,4 +436,4 @@ export const GALACTIC_SCALE_FATES: Record<
       gasGiant: 0.03, // surviving giants
     },
   },
-};
+}

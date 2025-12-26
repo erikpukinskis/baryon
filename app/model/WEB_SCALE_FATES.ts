@@ -1,49 +1,44 @@
-type WebScaleFateKey =
-    | 'void'
-    | 'sheet'
-    | 'filament'
-    | 'node'
-    | 'infallRegion';
+type WebScaleFateKey = "void" | "sheet" | "filament" | "node" | "infallRegion"
 
 type WebLock =
-    | 'haloCapture'   // matter enters a bound group/cluster halo
-    | false;
+  | "haloCapture" // matter enters a bound group/cluster halo
+  | false
 
 /**
  * Child fates at Mpc1 scale.
  * Web-scale fates constrain what groups and clusters can form.
  */
 type Mpc1ScaleFateKey =
-    | 'unboundAssociation'
-    | 'boundGroup'
-    | 'gasRichGroup'
-    | 'gasPoorGroup'
-    | 'fossilGroup'
-    | 'infallingGroup'
-    | 'protoCluster'
-    | 'collapsingCluster'
-    | 'relaxedCluster'
-    | 'coolCoreCluster'
-    | 'mergingCluster'
-    | 'fossilCluster'
-    | 'emptyCell';   // no structure formed (common in voids)
+  | "unboundAssociation"
+  | "boundGroup"
+  | "gasRichGroup"
+  | "gasPoorGroup"
+  | "fossilGroup"
+  | "infallingGroup"
+  | "protoCluster"
+  | "collapsingCluster"
+  | "relaxedCluster"
+  | "coolCoreCluster"
+  | "mergingCluster"
+  | "fossilCluster"
+  | "emptyCell" // no structure formed (common in voids)
 
 type WebScaleFateCharacteristics = {
-    typicalDensityContrast: number;     // relative to cosmic mean
-    dominantBaryonPhase: 'plasma';
-    gravitationallyBound: boolean;
+  typicalDensityContrast: number // relative to cosmic mean
+  dominantBaryonPhase: "plasma"
+  gravitationallyBound: boolean
 
-    fateLockedBy: WebLock;
-    typicalScaleMpc: number;             // characteristic size
-    definingProcesses: string[];
-    allowedTransitions: WebScaleFateKey[];
+  fateLockedBy: WebLock
+  typicalScaleMpc: number // characteristic size
+  definingProcesses: string[]
+  allowedTransitions: WebScaleFateKey[]
 
-    /**
-     * Probability distribution over child fates at Mpc1 scale.
-     * See GROUP_SCALE_FATES and CLUSTER_SCALE_FATES for child definitions.
-     */
-    childFateWeights?: Partial<Record<Mpc1ScaleFateKey, number>>;
-};
+  /**
+   * Probability distribution over child fates at Mpc1 scale.
+   * See GROUP_SCALE_FATES and CLUSTER_SCALE_FATES for child definitions.
+   */
+  childFateWeights?: Partial<Record<Mpc1ScaleFateKey, number>>
+}
 
 /**
  * WEB_SCALE_FATES
@@ -121,121 +116,114 @@ type WebScaleFateCharacteristics = {
  * This allows large-scale structure, galaxy environments, and matter transport
  * to be reasoned about consistently without conflating filaments with clusters.
  */
-export const WEB_SCALE_FATES: Record<WebScaleFateKey, WebScaleFateCharacteristics> = {
-
-    void: {
-        typicalDensityContrast: 0.1,
-        dominantBaryonPhase: 'plasma',
-        gravitationallyBound: false,
-        fateLockedBy: false,
-        typicalScaleMpc: 10,
-        definingProcesses: [
-            'cosmic expansion',
-            'matter evacuation',
-            'suppressed cooling'
-        ],
-        allowedTransitions: ['sheet'],
-        // Underdense regions: almost no structure formation
-        // Occasional isolated dwarfs at void edges
-        childFateWeights: {
-            emptyCell: 0.9,          // vast majority is empty
-            unboundAssociation: 0.08, // rare loose associations at edges
-            boundGroup: 0.02,         // very rare isolated groups
-        }
+export const WEB_SCALE_FATES: Record<
+  WebScaleFateKey,
+  WebScaleFateCharacteristics
+> = {
+  void: {
+    typicalDensityContrast: 0.1,
+    dominantBaryonPhase: "plasma",
+    gravitationallyBound: false,
+    fateLockedBy: false,
+    typicalScaleMpc: 10,
+    definingProcesses: [
+      "cosmic expansion",
+      "matter evacuation",
+      "suppressed cooling",
+    ],
+    allowedTransitions: ["sheet"],
+    // Underdense regions: almost no structure formation
+    // Occasional isolated dwarfs at void edges
+    childFateWeights: {
+      emptyCell: 0.9, // vast majority is empty
+      unboundAssociation: 0.08, // rare loose associations at edges
+      boundGroup: 0.02, // very rare isolated groups
     },
+  },
 
-    sheet: {
-        typicalDensityContrast: 0.3,
-        dominantBaryonPhase: 'plasma',
-        gravitationallyBound: false,
-        fateLockedBy: false,
-        typicalScaleMpc: 5,
-        definingProcesses: [
-            'pancake collapse',
-            'anisotropic infall'
-        ],
-        allowedTransitions: ['filament'],
-        // Weak overdensity: some groups beginning to form
-        childFateWeights: {
-            emptyCell: 0.6,           // still mostly empty
-            unboundAssociation: 0.25, // loose groupings
-            boundGroup: 0.1,          // some bound groups
-            gasRichGroup: 0.05,       // rare, need more infall
-        }
+  sheet: {
+    typicalDensityContrast: 0.3,
+    dominantBaryonPhase: "plasma",
+    gravitationallyBound: false,
+    fateLockedBy: false,
+    typicalScaleMpc: 5,
+    definingProcesses: ["pancake collapse", "anisotropic infall"],
+    allowedTransitions: ["filament"],
+    // Weak overdensity: some groups beginning to form
+    childFateWeights: {
+      emptyCell: 0.6, // still mostly empty
+      unboundAssociation: 0.25, // loose groupings
+      boundGroup: 0.1, // some bound groups
+      gasRichGroup: 0.05, // rare, need more infall
     },
+  },
 
-    filament: {
-        typicalDensityContrast: 3,   // representative value in 1-10 range
-        dominantBaryonPhase: 'plasma',
-        gravitationallyBound: false,
-        fateLockedBy: false,
-        typicalScaleMpc: 2,          // representative value in 1-3 range
-        definingProcesses: [
-            'one-dimensional collapse',
-            'matter transport',
-            'shock heating'
-        ],
-        allowedTransitions: ['node', 'infallRegion'],
-        // Matter transport corridor: groups common, clusters rare
-        childFateWeights: {
-            unboundAssociation: 0.25, // forming along filament
-            boundGroup: 0.25,         // common
-            gasRichGroup: 0.2,        // ongoing accretion
-            gasPoorGroup: 0.1,        // some evolved groups
-            emptyCell: 0.1,           // gaps between halos
-            protoCluster: 0.05,       // cluster seeds at dense points
-            fossilGroup: 0.03,        // isolated evolved groups
-            infallingGroup: 0.02,     // near larger structures
-        }
+  filament: {
+    typicalDensityContrast: 3, // representative value in 1-10 range
+    dominantBaryonPhase: "plasma",
+    gravitationallyBound: false,
+    fateLockedBy: false,
+    typicalScaleMpc: 2, // representative value in 1-3 range
+    definingProcesses: [
+      "one-dimensional collapse",
+      "matter transport",
+      "shock heating",
+    ],
+    allowedTransitions: ["node", "infallRegion"],
+    // Matter transport corridor: groups common, clusters rare
+    childFateWeights: {
+      unboundAssociation: 0.25, // forming along filament
+      boundGroup: 0.25, // common
+      gasRichGroup: 0.2, // ongoing accretion
+      gasPoorGroup: 0.1, // some evolved groups
+      emptyCell: 0.1, // gaps between halos
+      protoCluster: 0.05, // cluster seeds at dense points
+      fossilGroup: 0.03, // isolated evolved groups
+      infallingGroup: 0.02, // near larger structures
     },
+  },
 
-    node: {
-        typicalDensityContrast: 30,  // representative value >10
-        dominantBaryonPhase: 'plasma',
-        gravitationallyBound: false, // node itself is a junction, not the cluster
-        fateLockedBy: false,
-        typicalScaleMpc: 1,
-        definingProcesses: [
-            'filament intersection',
-            'maximum inflow'
-        ],
-        allowedTransitions: ['infallRegion'],
-        // Filament intersection: clusters form here
-        childFateWeights: {
-            protoCluster: 0.2,        // clusters assembling
-            collapsingCluster: 0.15,  // actively forming
-            boundGroup: 0.15,         // infalling groups
-            gasRichGroup: 0.15,       // fresh infall
-            infallingGroup: 0.1,      // being captured
-            relaxedCluster: 0.1,      // mature clusters
-            gasPoorGroup: 0.05,       // stripped groups
-            mergingCluster: 0.05,     // cluster-cluster mergers
-            coolCoreCluster: 0.05,    // evolved massive clusters
-        }
+  node: {
+    typicalDensityContrast: 30, // representative value >10
+    dominantBaryonPhase: "plasma",
+    gravitationallyBound: false, // node itself is a junction, not the cluster
+    fateLockedBy: false,
+    typicalScaleMpc: 1,
+    definingProcesses: ["filament intersection", "maximum inflow"],
+    allowedTransitions: ["infallRegion"],
+    // Filament intersection: clusters form here
+    childFateWeights: {
+      protoCluster: 0.2, // clusters assembling
+      collapsingCluster: 0.15, // actively forming
+      boundGroup: 0.15, // infalling groups
+      gasRichGroup: 0.15, // fresh infall
+      infallingGroup: 0.1, // being captured
+      relaxedCluster: 0.1, // mature clusters
+      gasPoorGroup: 0.05, // stripped groups
+      mergingCluster: 0.05, // cluster-cluster mergers
+      coolCoreCluster: 0.05, // evolved massive clusters
     },
+  },
 
-    infallRegion: {
-        typicalDensityContrast: 50,  // representative value >10
-        dominantBaryonPhase: 'plasma',
-        gravitationallyBound: false,
-        fateLockedBy: 'haloCapture',
-        typicalScaleMpc: 1,
-        definingProcesses: [
-            'accretion shocks',
-            'transition to bound halo'
-        ],
-        allowedTransitions: [], // exits web-scale model
-        // Transition zone: matter entering bound halos
-        // This is where groups become cluster members
-        childFateWeights: {
-            infallingGroup: 0.3,      // groups being accreted
-            collapsingCluster: 0.2,   // cluster assembly ongoing
-            relaxedCluster: 0.15,     // mature clusters
-            mergingCluster: 0.1,      // active mergers
-            coolCoreCluster: 0.1,     // evolved cores
-            gasPoorGroup: 0.08,       // stripped by ICM
-            fossilGroup: 0.05,        // isolated massive ellipticals
-            fossilCluster: 0.02,      // very evolved
-        }
-    }
-};
+  infallRegion: {
+    typicalDensityContrast: 50, // representative value >10
+    dominantBaryonPhase: "plasma",
+    gravitationallyBound: false,
+    fateLockedBy: "haloCapture",
+    typicalScaleMpc: 1,
+    definingProcesses: ["accretion shocks", "transition to bound halo"],
+    allowedTransitions: [], // exits web-scale model
+    // Transition zone: matter entering bound halos
+    // This is where groups become cluster members
+    childFateWeights: {
+      infallingGroup: 0.3, // groups being accreted
+      collapsingCluster: 0.2, // cluster assembly ongoing
+      relaxedCluster: 0.15, // mature clusters
+      mergingCluster: 0.1, // active mergers
+      coolCoreCluster: 0.1, // evolved cores
+      gasPoorGroup: 0.08, // stripped by ICM
+      fossilGroup: 0.05, // isolated massive ellipticals
+      fossilCluster: 0.02, // very evolved
+    },
+  },
+}

@@ -1,13 +1,13 @@
 {
   "description": "Baryon: Spreadsheets in Space",
   "type": "module",
+  "engines": {
+    "node": "22",
+    "yarn": "1.x"
+  },
   "name": "baryon",
   "version": "0.1.0",
   "license": "UNLICENSED",
-  "engines": {
-    "node": "24",
-    "yarn": "1.x"
-  },
   "dependencies": {
     "react": "^17.0.0",
     "react-dom": "^17.0.0"
@@ -20,7 +20,7 @@
     "@typescript-eslint/eslint-plugin": "5.46.0",
     "@typescript-eslint/parser": "^8.50.1",
     "@vitejs/plugin-react": "^5.1.2",
-    "codedocs": "^0.18.0",
+    "codedocs": "file:.yalc/codedocs",
     "eslint": "8.29.0",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
@@ -36,14 +36,16 @@
   },
   "scripts": {
     "all": "yarn && yarn fix && yarn check:types && yarn test && echo `echo 8J+OiSBEaWQgYWxs | base64 -d`",
+    "build:docs": "vite build --config vite.docs.config.js --mode development && mv site/docs/index.html site && rmdir site/docs && cp site/index.html site/404.html",
     "check:format": "prettier --check --ignore-path .gitignore .",
     "check:lint": "eslint --ignore-path .gitignore --no-error-on-unmatched-pattern .; if [ $? -eq 0 ]; then echo 8J+OiSBObyBsaW50IGluIHRoaXMgY29kZSEKCg== | base64 -d; else exit 1; fi",
     "check:types": "tsc --noEmit -p tsconfig.json; if [ $? -eq 0 ]; then echo 8J+OiSBUeXBlcyBhcmUgZ29vZCEKCg== | base64 -d; else exit 1; fi",
-    "confgen": "npx confgen@latest @app react vite vitest typescript yarn eslint prettier githubActions start codespaces",
+    "confgen": "npx confgen@latest @app @docs react vite vitest typescript yarn eslint prettier githubActions start codespaces",
     "fix": "yarn fix:lint && yarn fix:format",
     "fix:format": "prettier --write --ignore-path .gitignore .",
     "fix:lint": "eslint --ignore-path .gitignore --no-error-on-unmatched-pattern . --fix; if [ $? -eq 0 ]; then echo 8J+OiSBObyBsaW50IGluIHRoaXMgY29kZSEKCg== | base64 -d; else exit 1; fi",
     "start:app:dev": "vite serve app --config vite.app.config.js",
+    "start:docs:dev": "vite serve docs --config vite.docs.config.js",
     "test": "vitest run --config vite.test.config.js",
     "watch:test": "vitest watch --config vite.test.config.js"
   }

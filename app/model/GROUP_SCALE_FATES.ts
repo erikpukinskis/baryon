@@ -4,13 +4,13 @@ type GroupScaleFateKey =
   | "gasRichGroup"
   | "gasPoorGroup"
   | "fossilGroup"
-  | "infallingGroup";
+  | "infallingGroup"
 
 type GroupLock =
   | "gravitationalBinding" // becomes a real group
   | "dynamicalExhaustion" // internal merging largely complete
   | "externalCapture" // absorbed into larger halo
-  | false;
+  | false
 
 /**
  * Galactic fate keys, imported conceptually for type reference.
@@ -24,20 +24,20 @@ type GalacticScaleFateKey =
   | "lenticularGalaxy"
   | "ellipticalGalaxy"
   | "activeGalactic"
-  | "quenchedRemnant";
+  | "quenchedRemnant"
 
 type GroupScaleCharacteristics = {
-  haloMassMin: number; // dark matter halo mass (M☉)
-  haloMassMax?: number;
+  haloMassMin: number // dark matter halo mass (M☉)
+  haloMassMax?: number
 
-  gravitationallyBound: boolean;
-  dominantBaryonPhase: "mixed" | "stellar" | "plasma";
+  gravitationallyBound: boolean
+  dominantBaryonPhase: "mixed" | "stellar" | "plasma"
 
-  fateLockedBy: GroupLock;
-  typicalTimescaleGyr: number;
+  fateLockedBy: GroupLock
+  typicalTimescaleGyr: number
 
-  definingProcesses: string[];
-  allowedTransitions: GroupScaleFateKey[];
+  definingProcesses: string[]
+  allowedTransitions: GroupScaleFateKey[]
 
   /**
    * CHILD FATE WEIGHTS (Marginal Distribution)
@@ -47,8 +47,8 @@ type GroupScaleCharacteristics = {
    * fraction of the 10×10 child grid should have each fate, summed over the
    * whole tile.
    *
-   * These weights answer: "In this parent regime, what mix of child fates exists?"
-   * They do NOT answer: "Where in the tile does each fate appear?"
+   * These weights answer: "In this parent regime, what mix of child fates
+   * exists?" They do NOT answer: "Where in the tile does each fate appear?"
    *
    * Why weights belong on the parent:
    *
@@ -60,16 +60,15 @@ type GroupScaleCharacteristics = {
    * How to read these weights:
    *
    *   • Weights are **relative**, not absolute. They are normalized at runtime.
-   *   • Higher weight = more probable in this parent context.
-   *   • Omitted fates have weight 0 (essentially absent in this context).
-   *   • These are **priors**, not hard rules.
+   *   • Higher weight = more probable in this parent context. • Omitted fates
+   *   have weight 0 (essentially absent in this context). • These are
+   *   **priors**, not hard rules.
    *
    * Example:
    *
-   *   fossilGroup.childFateWeights = {
-   *     ellipticalGalaxy: 0.5,   // dominant—mergers complete
-   *     quenchedRemnant: 0.2,    // common—no gas left
-   *     dwarfSpheroid: 0.15,     // surviving satellites
+   *   fossilGroup.childFateWeights = { ellipticalGalaxy: 0.5,   //
+   *     dominant—mergers complete quenchedRemnant: 0.2,    // common—no gas
+   *     left dwarfSpheroid: 0.15,     // surviving satellites
    *   }
    *
    *   This says: "In a fossil group tile, about 50% of child cells are
@@ -78,23 +77,22 @@ type GroupScaleCharacteristics = {
    * ─────────────────────────────────────────────────────────────────────────
    * FUTURE: SPATIAL STRUCTURE (childFieldPrior)
    *
-   * The weights define WHAT fates appear. A future `childFieldPrior` field
-   * will define WHERE they appear—the spatial structure of the child tile:
+   * The weights define WHAT fates appear. A future `childFieldPrior` field will
+   * define WHERE they appear—the spatial structure of the child tile:
    *
-   *   • Clustering: similar fates grouped together
-   *   • Gradients: density increasing toward filament/center
-   *   • Voids: contiguous empty regions
+   *   • Clustering: similar fates grouped together • Gradients: density
+   *   increasing toward filament/center • Voids: contiguous empty regions
    *
-   * The two work together:
-   *   • childFateWeights → thresholds for converting field values to fates
-   *   • childFieldPrior → parameters for generating the continuous field
+   * The two work together: • childFateWeights → thresholds for converting field
+   *   values to fates • childFieldPrior → parameters for generating the
+   *   continuous field
    *
    * This ensures marginals match the weights while adding spatial coherence.
-   * See scales.ts for the full architecture.
+   * See ~/model for the full architecture.
    * ─────────────────────────────────────────────────────────────────────────
    */
-  childFateWeights?: Partial<Record<GalacticScaleFateKey, number>>;
-};
+  childFateWeights?: Partial<Record<GalacticScaleFateKey, number>>
+}
 
 /**
  * GROUP_SCALE_FATES
@@ -363,4 +361,4 @@ export const GROUP_SCALE_FATES: Record<
       diffuseHalo: 0.1, // tidal debris, disrupted dwarfs
     },
   },
-};
+}

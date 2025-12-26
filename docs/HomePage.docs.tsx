@@ -1,4 +1,4 @@
 import { Doc } from "codedocs"
 import React from "react"
 
-export default <Doc path="/">Welcome!</Doc>
+export const HomePageDocs = <Doc path="/">Welcome!</Doc>

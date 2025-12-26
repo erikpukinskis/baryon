@@ -13,5 +13,5 @@
     "downlevelIteration": true,
     "jsx": "react-jsx"
   },
-  "include": ["app"]
+  "include": ["app", "docs"]
 }
