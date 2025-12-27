@@ -62,7 +62,8 @@
  * Phase 2 (full hierarchy):
  *   - [ ] Web-scale (Mpc10) observation with childFateWeights
  *   - [ ] Cluster-scale fates (parallel to group-scale)
- *   - [ ] Stellar-scale observation within galaxies
+ *   - [ ] Interstellar-scale (pc100) observation within galaxies
+ *   - [ ] Stellar-scale (pc1) observation within regions
  *
  * Phase 3 (bidirectional constraints):
  *   - [ ] Bottom-up inference: child observations → parent fate constraints
@@ -76,11 +77,13 @@ import {
   sampleFromThresholds,
 } from "~/helpers/noise"
 import type { Coordinates, ScaleKey } from "~/model"
-import type { GALACTIC_SCALE_FATES } from "~/model/GALACTIC_SCALE_FATES"
-import { GROUP_SCALE_FATES } from "~/model/GROUP_SCALE_FATES"
+import {
+  HALO_SCALE_FATES,
+  type HaloScaleFateKey,
+} from "~/model/02_HALO_SCALE_FATES"
+import type { GALACTIC_SCALE_FATES } from "~/model/03_GALACTIC_SCALE_FATES"
 
 type GalacticFateKey = keyof typeof GALACTIC_SCALE_FATES
-type GroupFateKey = keyof typeof GROUP_SCALE_FATES
 
 /**
  * Fates that count as "real galaxies" (not just diffuse halos).
@@ -134,6 +137,8 @@ type FindGalaxiesResult = {
  *         "Mpc10": [20,25],
  *         "Mpc1": [4,0],
  *         "kpc100": [0,0],
+ *         "pc100": [5,3],   // interstellar scale (GMCs, clusters)
+ *         "pc1": [42,17],   // stellar scale
  *       }
  */
 export function findGalaxies({
@@ -216,22 +221,22 @@ function seededRandom(seed: number): number {
 }
 
 /**
- * Observe the group-scale fate at the given Mpc1 coordinates.
+ * Observe the halo-scale fate at the given Mpc1 coordinates.
  *
- * Uses Perlin noise to sample from the space of group fates.
- * For now, uses a uniform distribution (all group fates equally likely).
+ * Uses Perlin noise to sample from the space of halo fates.
+ * For now, uses a uniform distribution (all halo fates equally likely).
  *
- * TODO: Use parent (Mpc10) web-scale fate to constrain group fate weights.
+ * TODO: Use parent (Mpc10) web-scale fate to constrain halo fate weights.
  */
-function observeGroupFate(
+function observeHaloFate(
   coords: Coordinates,
   universeSeed: number
-): GroupFateKey {
+): HaloScaleFateKey {
   const mpc1 = coords.Mpc1
   const mpc10 = coords.Mpc10
 
   if (!mpc1 || !mpc10) {
-    throw new Error("Mpc1 and Mpc10 coordinates required to observe group fate")
+    throw new Error("Mpc1 and Mpc10 coordinates required to observe halo fate")
   }
 
   // Compute a seed for this Mpc1 tile based on its absolute position
@@ -240,15 +245,15 @@ function observeGroupFate(
   // Sample Perlin noise at the Mpc1 position within the Mpc10 tile
   const noiseValue = perlin2d(mpc1[0], mpc1[1], tileSeed)
 
-  // For now, use uniform weights across all group fates
+  // For now, use uniform weights across all halo fates
   // TODO: Get weights from parent (web-scale) fate
-  const uniformWeights: Partial<Record<GroupFateKey, number>> = {
-    unboundAssociation: 0.2,
-    boundGroup: 0.25,
-    gasRichGroup: 0.2,
-    gasPoorGroup: 0.15,
+  const uniformWeights: Partial<Record<HaloScaleFateKey, number>> = {
+    gasRichGroup: 0.25,
+    gasPoorGroup: 0.25,
     fossilGroup: 0.1,
-    infallingGroup: 0.1,
+    coolCoreCluster: 0.15,
+    nonCoolCoreCluster: 0.15,
+    fossilCluster: 0.1,
   }
 
   const { keys, thresholds } = computeThresholds(uniformWeights)
@@ -280,8 +285,8 @@ function observeGalacticFate(
   }
 
   // First, observe the parent's fate
-  const parentFate = observeGroupFate(coords, universeSeed)
-  const parentCharacteristics = GROUP_SCALE_FATES[parentFate]
+  const parentFate = observeHaloFate(coords, universeSeed)
+  const parentCharacteristics = HALO_SCALE_FATES[parentFate]
 
   // Get the parent's childFateWeights
   const weights = parentCharacteristics.childFateWeights
@@ -305,5 +310,5 @@ function observeGalacticFate(
 
   // Convert weights to thresholds and sample
   const { keys, thresholds } = computeThresholds(weights)
-  return sampleFromThresholds(noiseValue, keys, thresholds) as GalacticFateKey
+  return sampleFromThresholds(noiseValue, keys, thresholds)
 }
