@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react"
-import { GALACTIC_SCALE_FATE_COLORS } from "~/helpers/colors"
+import { COLORS_BY_KEY, EMPTY_FATE_COLOR } from "~/helpers/colors"
 import {
   perlin2d,
   computeThresholds,
@@ -65,8 +65,8 @@ export const Map: React.FC<MapProps> = ({
     const weights = parentCharacteristics.childFateWeights
 
     if (!weights || Object.keys(weights).length === 0) {
-      // Fallback: if no weights, fill with diffuseHalo
-      ctx.fillStyle = GALACTIC_SCALE_FATE_COLORS.diffuseHalo
+      // Fallback: if no weights, fill with empty
+      ctx.fillStyle = EMPTY_FATE_COLOR.hex
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       return
     }
@@ -92,7 +92,7 @@ export const Map: React.FC<MapProps> = ({
         const fate = sampleFromThresholds(noiseValue, keys, thresholds)
 
         // Paint the cell
-        ctx.fillStyle = GALACTIC_SCALE_FATE_COLORS[fate]
+        ctx.fillStyle = COLORS_BY_KEY[fate].hex
         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize)
       }
     }
@@ -100,6 +100,7 @@ export const Map: React.FC<MapProps> = ({
 
   return (
     <canvas
+      data-component="Map"
       ref={canvasRef}
       width={gridSize * cellSize}
       height={gridSize * cellSize}
