@@ -147,6 +147,19 @@ import { STAR_SCALE_FATES } from "./05_STAR_SCALE_FATES"
  * views one parcel's local 2D grid at a time.
  */
 
+/**
+ * SCALES defines the spatial hierarchy of the simulation.
+ *
+ * Each scale represents a grid resolution. Scales are ordered from largest
+ * (Mpc10) to smallest (apc1). Adjacent scales must differ by at most 1000x
+ * to ensure hierarchical coordinates fit within JavaScript's safe integer range.
+ *
+ * A Coordinate encodes position from a "bottom scale" upward. Larger-scale
+ * context (e.g., galaxy type, stellar density) is derived as properties,
+ * not embedded in coordinates. This keeps the system scale-invariant.
+ *
+ * // TODO: let's add some examples here
+ */
 export const SCALES = {
   /**
    * 10x10 Mpc grid: cosmic web geometry
@@ -186,11 +199,160 @@ export const SCALES = {
     fates: { STAR_SCALE_FATES },
   },
 
-  // AU1: {
-  //   fates: { PLANETARY_SCALE_FATES }
-  // }
+  /**
+   * ~1 milliparsec grid: outer planetary systems, Oort clouds
+   */
+  mpc1: {
+    fates: {
+      // OUTER_SYSTEM_FATES,
+    },
+  },
+
+  /**
+   * ~1 microparsec grid: inner planetary systems, planets with moons
+   */
+  upc1: {
+    fates: {
+      // PLANETARY_SCALE_FATES,
+    },
+  },
+
+  /**
+   * ~1 nanoparsec grid: individual planets, large moons
+   */
+  npc1: {
+    fates: {
+      // WORLD_SCALE_FATES,
+    },
+  },
+
+  /**
+   * ~1 picoparsec grid: continental features, mantle plumes, plutons
+   */
+  ppc1: {
+    fates: {
+      // CONTINENTAL_SCALE_FATES,
+    },
+  },
+
+  /**
+   * ~1 femtoparsec grid: landscape features, forests, caves
+   */
+  fpc1: {
+    fates: {
+      // LANDSCAPE_SCALE_FATES,
+    },
+  },
+
+  /**
+   * ~1 attoparsec grid: individual objects, trees, rocks, organisms
+   */
+  apc1: {
+    fates: {
+      // OBJECT_SCALE_FATES,
+    },
+  },
 }
 
 export type ScaleKey = keyof typeof SCALES
 
+/**
+ * Ordered list of scales from smallest to largest.
+ * Used for hierarchical coordinate encoding/decoding.
+ */
+export const SCALE_ORDER: ScaleKey[] = [
+  "apc1",
+  "fpc1",
+  "ppc1",
+  "npc1",
+  "upc1",
+  "mpc1",
+  "pc1",
+  "pc100",
+  "kpc100",
+  "Mpc1",
+  "Mpc10",
+]
+
+/**
+ * How many cells of THIS scale fit within one cell of the NEXT LARGER scale.
+ * All values are ≤1000 to ensure safe integer arithmetic.
+ */
+export const SCALE_WIDTH: Record<ScaleKey, number> = {
+  apc1: 1000, // 1000 apc1 per fpc1
+  fpc1: 1000, // 1000 fpc1 per ppc1
+  ppc1: 1000, // 1000 ppc1 per npc1
+  npc1: 1000, // 1000 npc1 per upc1
+  upc1: 1000, // 1000 upc1 per mpc1
+  mpc1: 1000, // 1000 mpc1 per pc1
+  pc1: 100, // 100 pc1 per pc100
+  pc100: 1000, // 1000 pc100 per kpc100
+  kpc100: 10, // 10 kpc100 per Mpc1
+  Mpc1: 10, // 10 Mpc1 per Mpc10
+  // TODO: should this be more like 1000? Are there structures above the web scale? I think an obervable universe of 1000x1000 Mpc should be plenty.
+  Mpc10: 10, // top level (arbitrary bound)
+}
+
+/**
+ * A hierarchical coordinate encoding position across multiple scales.
+ *
+ * - `scale`: The "bottom" scale — the finest resolution encoded
+ * - `x`, `y`: Hierarchical integers encoding positions from `scale` upward
+ *
+ * The x,y values pack coordinates at all scales from `scale` up to the largest.
+ * Scales smaller than `scale` are implicitly at origin (0,0).
+ * // TODO: Should this be scales *larger* than scale? Scales smaller than scale don't exist at this level of simulation, right?
+ */
+export type Coordinate = {
+  scale: ScaleKey
+  x: number
+  y: number
+}
+
+/**
+ * Decode a hierarchical coordinate value into per-scale positions.
+ */
+export function decodeCoordinate(
+  value: number,
+  bottomScale: ScaleKey
+): Partial<Record<ScaleKey, number>> {
+  const result: Partial<Record<ScaleKey, number>> = {}
+  const startIndex = SCALE_ORDER.indexOf(bottomScale)
+
+  let multiplier = 1
+  for (let i = startIndex; i < SCALE_ORDER.length; i++) {
+    const scale = SCALE_ORDER[i]
+    const width = SCALE_WIDTH[scale]
+    result[scale] = Math.floor(value / multiplier) % width
+    multiplier *= width
+  }
+
+  return result
+}
+
+/**
+ * Encode per-scale positions into a single hierarchical coordinate value.
+ */
+export function encodeCoordinate(
+  coords: Partial<Record<ScaleKey, number>>,
+  bottomScale: ScaleKey
+): number {
+  const startIndex = SCALE_ORDER.indexOf(bottomScale)
+
+  let result = 0
+  let multiplier = 1
+  for (let i = startIndex; i < SCALE_ORDER.length; i++) {
+    const scale = SCALE_ORDER[i]
+    const value = coords[scale] ?? 0
+    result += value * multiplier
+    multiplier *= SCALE_WIDTH[scale]
+  }
+
+  return result
+}
+
+/**
+ * @deprecated Use Coordinate instead. This type is kept for backward
+ * compatibility with findGalaxies.ts
+ */
 export type Coordinates = Partial<Record<ScaleKey, [number, number]>>

@@ -5,6 +5,7 @@ import {
   computeThresholds,
   sampleFromThresholds,
 } from "~/helpers/noise"
+import type { Coordinate } from "~/model"
 import {
   HALO_SCALE_FATES,
   type HaloScaleFateKey,
@@ -19,22 +20,11 @@ type MapProps = {
   haloFate: HaloScaleFateKey
 
   /**
-   * Mpc10 coordinates — position of the web-scale parcel.
-   * Used to compute the tile seed for deterministic noise.
+   * Hierarchical coordinate identifying this tile.
+   * The scale should be "Mpc1" for halo-scale maps.
+   * The x,y values encode positions at Mpc1 and Mpc10 scales.
    */
-  mpc10: [number, number]
-
-  /**
-   * Mpc1 coordinates — position of this halo parcel within its web parcel.
-   * Used to compute the tile seed for deterministic noise.
-   */
-  mpc1: [number, number]
-
-  /**
-   * Universe seed for reproducibility.
-   * Same coordinates + seed always produces the same map.
-   */
-  universeSeed?: number
+  coordinate: Coordinate
 
   /** Pixel size of each cell. Default 40. */
   cellSize?: number
@@ -45,9 +35,7 @@ type MapProps = {
 
 export const Map: React.FC<MapProps> = ({
   haloFate,
-  mpc10,
-  mpc1,
-  universeSeed = 42,
+  coordinate,
   cellSize = 40,
   gridSize = 10,
 }) => {
@@ -74,13 +62,8 @@ export const Map: React.FC<MapProps> = ({
     // Compute thresholds from weights
     const { keys, thresholds } = computeThresholds(weights)
 
-    // Compute tile seed (same formula as observeGalacticFate in findGalaxies.ts)
-    const tileSeed =
-      universeSeed * 7 +
-      mpc10[0] * 10000 +
-      mpc10[1] * 1000 +
-      mpc1[0] * 100 +
-      mpc1[1]
+    // Compute tile seed from hierarchical coordinate
+    const tileSeed = coordinate.x * 10000 + coordinate.y
 
     // Paint each cell
     for (let x = 0; x < gridSize; x++) {
@@ -96,7 +79,7 @@ export const Map: React.FC<MapProps> = ({
         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize)
       }
     }
-  }, [haloFate, mpc10, mpc1, universeSeed, cellSize, gridSize])
+  }, [haloFate, coordinate, cellSize, gridSize])
 
   return (
     <canvas

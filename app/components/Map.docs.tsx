@@ -10,17 +10,26 @@ export const MapDocs = (
 
     <h2>Gas-Rich Group</h2>
     <Demo inline>
-      <Map haloFate="gasRichGroup" mpc10={[5, 3]} mpc1={[2, 7]} />
+      <Map
+        haloFate="gasRichGroup"
+        coordinate={{ scale: "Mpc1", x: 52, y: 37 }}
+      />
     </Demo>
 
     <h2>Fossil Group</h2>
     <Demo inline>
-      <Map haloFate="fossilGroup" mpc10={[5, 3]} mpc1={[4, 2]} />
+      <Map
+        haloFate="fossilGroup"
+        coordinate={{ scale: "Mpc1", x: 54, y: 32 }}
+      />
     </Demo>
 
     <h2>Cool-Core Cluster</h2>
     <Demo inline>
-      <Map haloFate="coolCoreCluster" mpc10={[5, 3]} mpc1={[8, 1]} />
+      <Map
+        haloFate="coolCoreCluster"
+        coordinate={{ scale: "Mpc1", x: 58, y: 31 }}
+      />
     </Demo>
   </Doc>
 )
