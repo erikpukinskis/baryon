@@ -1,8 +1,71 @@
-import { WEB_SCALE_FATES } from "./01_WEB_SCALE_FATES"
-import { HALO_SCALE_FATES } from "./02_HALO_SCALE_FATES"
-import { GALACTIC_SCALE_FATES } from "./03_GALACTIC_SCALE_FATES"
-import { INTERSTELLAR_SCALE_FATES } from "./04_INTERSTELLAR_SCALE_FATES"
-import { STAR_SCALE_FATES } from "./05_STAR_SCALE_FATES"
+import { WEB_SCALE_FATES, type WebScaleFateKey } from "./01_WEB_SCALE_FATES"
+import { HALO_SCALE_FATES, type HaloScaleFateKey } from "./02_HALO_SCALE_FATES"
+import {
+  GALACTIC_SCALE_FATES,
+  type GalacticScaleFateKey,
+} from "./03_GALACTIC_SCALE_FATES"
+import {
+  INTERSTELLAR_SCALE_FATES,
+  type InterstellarScaleFateKey,
+} from "./04_INTERSTELLAR_SCALE_FATES"
+import { STAR_SCALE_FATES, type StarScaleFateKey } from "./05_STAR_SCALE_FATES"
+
+export type {
+  WebScaleFateKey,
+  HaloScaleFateKey,
+  GalacticScaleFateKey,
+  InterstellarScaleFateKey,
+  StarScaleFateKey,
+}
+
+/**
+ * Union of all fate keys that have childFateWeights.
+ * These are the fates that can serve as parents when sampling child parcels.
+ */
+export type ParentFateKey =
+  | WebScaleFateKey
+  | HaloScaleFateKey
+  | GalacticScaleFateKey
+  | InterstellarScaleFateKey
+
+// TODO: I wonder about the name "fate with children".... seems like this is just a partial of FateCharacteristics?
+/**
+ * Minimal interface for fate characteristics relevant to sampling children.
+ */
+export type FateWithChildren = {
+  childFateWeights?: Partial<Record<string, number>>
+}
+
+// Build a single lookup map with explicit typing to satisfy ESLint
+// TODO: This was a hack to satisfy ESLint. Can we do this without the "as"?
+const PARENT_FATE_LOOKUP = new Map<ParentFateKey, FateWithChildren>()
+
+for (const [key, value] of Object.entries(WEB_SCALE_FATES)) {
+  PARENT_FATE_LOOKUP.set(key as WebScaleFateKey, value)
+}
+for (const [key, value] of Object.entries(HALO_SCALE_FATES)) {
+  PARENT_FATE_LOOKUP.set(key as HaloScaleFateKey, value)
+}
+for (const [key, value] of Object.entries(GALACTIC_SCALE_FATES)) {
+  PARENT_FATE_LOOKUP.set(key as GalacticScaleFateKey, value)
+}
+for (const [key, value] of Object.entries(INTERSTELLAR_SCALE_FATES)) {
+  PARENT_FATE_LOOKUP.set(key as InterstellarScaleFateKey, value)
+}
+
+/**
+ * Look up the characteristics of any fate by its key.
+ * Returns the fate object which includes childFateWeights if applicable.
+ */
+export function getFateCharacteristics(
+  fateKey: ParentFateKey
+): FateWithChildren {
+  const characteristics = PARENT_FATE_LOOKUP.get(fateKey)
+  if (!characteristics) {
+    throw new Error(`Unknown fate key: ${String(fateKey)}`)
+  }
+  return characteristics
+}
 
 /**
  * BARYON — A UNIVERSE SIMULATION MODEL
@@ -158,7 +221,15 @@ import { STAR_SCALE_FATES } from "./05_STAR_SCALE_FATES"
  * context (e.g., galaxy type, stellar density) is derived as properties,
  * not embedded in coordinates. This keeps the system scale-invariant.
  *
- * // TODO: let's add some examples here
+ * Example: A coordinate at scale "Mpc1" with x=52, y=37 encodes:
+ *   - Mpc1:  (2, 7)   ← 52 % 10 = 2,  37 % 10 = 7
+ *   - Mpc10: (5, 3)   ← 52 / 10 = 5,  37 / 10 = 3
+ *
+ * Example: A coordinate at scale "pc1" with x=4523, y=891 encodes:
+ *   - pc1:   (23, 91)  ← x % 100,      y % 100
+ *   - pc100: (45, 8)   ← (x / 100) % 1000, (y / 100) % 1000
+ *   - kpc100: (0, 0)   ← (x / 100000) % 10, etc.
+ *   - ...and so on up to Mpc10
  */
 export const SCALES = {
   /**
@@ -289,19 +360,18 @@ export const SCALE_WIDTH: Record<ScaleKey, number> = {
   pc100: 1000, // 1000 pc100 per kpc100
   kpc100: 10, // 10 kpc100 per Mpc1
   Mpc1: 10, // 10 Mpc1 per Mpc10
-  // TODO: should this be more like 1000? Are there structures above the web scale? I think an obervable universe of 1000x1000 Mpc should be plenty.
-  Mpc10: 10, // top level (arbitrary bound)
+  Mpc10: 1000, // 1000×1000 grid covers 10,000 Mpc — plenty for observable universe
 }
 
 /**
  * A hierarchical coordinate encoding position across multiple scales.
  *
- * - `scale`: The "bottom" scale — the finest resolution encoded
+ * - `scale`: The "bottom" scale — the finest resolution being simulated
  * - `x`, `y`: Hierarchical integers encoding positions from `scale` upward
  *
  * The x,y values pack coordinates at all scales from `scale` up to the largest.
- * Scales smaller than `scale` are implicitly at origin (0,0).
- * // TODO: Should this be scales *larger* than scale? Scales smaller than scale don't exist at this level of simulation, right?
+ * Scales smaller than `scale` are not part of this coordinate system — they
+ * belong to a different simulation context entirely.
  */
 export type Coordinate = {
   scale: ScaleKey

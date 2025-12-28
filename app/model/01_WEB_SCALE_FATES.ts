@@ -1,9 +1,15 @@
-type WebScaleFateKey = "void" | "sheet" | "filament" | "node" | "infallRegion"
+export type WebScaleFateKey =
+  | "void"
+  | "sheet"
+  | "filament"
+  | "node"
+  | "infallRegion"
 
 type WebLock =
   | "haloCapture" // matter enters a bound group/cluster halo
   | false
 
+// TODO: Call this HaloScaleFateKey? Already exists somewhere?
 /**
  * Child fates at Mpc1 scale.
  */

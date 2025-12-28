@@ -5,24 +5,27 @@ import {
   computeThresholds,
   sampleFromThresholds,
 } from "~/helpers/noise"
-import type { Coordinate } from "~/model"
 import {
-  HALO_SCALE_FATES,
-  type HaloScaleFateKey,
-} from "~/model/02_HALO_SCALE_FATES"
+  type Coordinate,
+  type ParentFateKey,
+  getFateCharacteristics,
+} from "~/model"
 
 type MapProps = {
   /**
-   * The halo-scale fate determines what galactic fates appear in this tile.
-   * Each halo fate has childFateWeights that define the probability
-   * distribution over galactic fates.
+   * The fate of the parent parcel. This determines what child fates appear
+   * in this tile via childFateWeights.
+   *
+   * For example:
+   * - A halo fate (e.g. "gasRichGroup") determines galactic fates
+   * - A web fate (e.g. "filament") determines halo fates
+   * - A galactic fate (e.g. "spiralGalaxy") determines interstellar fates
    */
-  haloFate: HaloScaleFateKey
+  parentFate: ParentFateKey
 
   /**
    * Hierarchical coordinate identifying this tile.
-   * The scale should be "Mpc1" for halo-scale maps.
-   * The x,y values encode positions at Mpc1 and Mpc10 scales.
+   * The x,y values encode positions across multiple scales.
    */
   coordinate: Coordinate
 
@@ -34,7 +37,7 @@ type MapProps = {
 }
 
 export const Map: React.FC<MapProps> = ({
-  haloFate,
+  parentFate,
   coordinate,
   cellSize = 40,
   gridSize = 10,
@@ -48,8 +51,10 @@ export const Map: React.FC<MapProps> = ({
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
+    // TODO: validate that parentFate matches the coordinate scale?
+
     // Get parent's childFateWeights
-    const parentCharacteristics = HALO_SCALE_FATES[haloFate]
+    const parentCharacteristics = getFateCharacteristics(parentFate)
     const weights = parentCharacteristics.childFateWeights
 
     if (!weights || Object.keys(weights).length === 0) {
@@ -79,7 +84,7 @@ export const Map: React.FC<MapProps> = ({
         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize)
       }
     }
-  }, [haloFate, coordinate, cellSize, gridSize])
+  }, [parentFate, coordinate, cellSize, gridSize])
 
   return (
     <canvas

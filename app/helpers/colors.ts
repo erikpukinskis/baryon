@@ -1,5 +1,3 @@
-import type { GalacticScaleFateKey } from "~/model/03_GALACTIC_SCALE_FATES"
-
 /**
  * NOTE: Color arrays should be ordered from LEAST active → MOST active.
  */
@@ -21,6 +19,7 @@ type FateColor = {
   description: string
 }
 
+// TODO: Make FateColor generic so we can be more strict about the key: FateColor<WebScaleFateKey>
 export const WEB_SCALE_FATE_COLOR_ARRAY: FateColor[] = [
   {
     key: "empty",
@@ -56,6 +55,83 @@ export const WEB_SCALE_FATE_COLOR_ARRAY: FateColor[] = [
     hex: "#6b7280",
     description:
       "Warm gray. Terminal state — matter captured into bound halos, no longer part of the free web.",
+  },
+]
+
+/**
+ * Colors for halo-scale fates (Mpc1 scale) — children of web-scale parents.
+ * Includes both stable halo fates and transitional states.
+ */
+export const HALO_SCALE_FATE_COLOR_ARRAY: FateColor[] = [
+  {
+    key: "unboundAssociation",
+    hex: "#1a1a2e",
+    description:
+      "Dark indigo. Loose associations of galaxies not yet gravitationally bound.",
+  },
+  {
+    key: "boundGroup",
+    hex: "#2d3a4a",
+    description: "Steel blue. Gravitationally bound but not yet virialized.",
+  },
+  {
+    key: "gasRichGroup",
+    hex: "#3a6b8c",
+    description:
+      "Ocean blue. Gas-rich group where cooling works and spirals thrive.",
+  },
+  {
+    key: "gasPoorGroup",
+    hex: "#5a7a8a",
+    description: "Dusty teal. Gas depleted, star formation quenched.",
+  },
+  {
+    key: "fossilGroup",
+    hex: "#7a8a7a",
+    description:
+      "Sage gray. Single giant elliptical dominates after mergers complete.",
+  },
+  {
+    key: "infallingGroup",
+    hex: "#6b5a7a",
+    description: "Dusty purple. Groups falling into larger structures.",
+  },
+  {
+    key: "protoCluster",
+    hex: "#4a5a8a",
+    description:
+      "Deep blue-gray. Early cluster formation, multiple groups assembling.",
+  },
+  {
+    key: "collapsingCluster",
+    hex: "#5a4a7a",
+    description: "Violet-gray. Actively collapsing, shocks forming.",
+  },
+  {
+    key: "relaxedCluster",
+    hex: "#8a5a6a",
+    description: "Dusty rose. Virialized but cooling not yet established.",
+  },
+  {
+    key: "coolCoreCluster",
+    hex: "#9a6a5a",
+    description: "Warm copper. Central cooling with AGN feedback equilibrium.",
+  },
+  {
+    key: "mergingCluster",
+    hex: "#aa5a5a",
+    description: "Brick red. Major merger in progress, highly disturbed.",
+  },
+  {
+    key: "nonCoolCoreCluster",
+    hex: "#8a6a6a",
+    description: "Muted rose. Merger-heated, no central cooling established.",
+  },
+  {
+    key: "fossilCluster",
+    hex: "#6a6a6a",
+    description:
+      "Neutral gray. Terminal state — one giant elliptical dominates.",
   },
 ]
 
@@ -121,6 +197,7 @@ export const EMPTY_FATE_COLOR = WEB_SCALE_FATE_COLOR_ARRAY[0] // "empty" is firs
  */
 export const COLORS_BY_KEY = [
   ...WEB_SCALE_FATE_COLOR_ARRAY,
+  ...HALO_SCALE_FATE_COLOR_ARRAY,
   ...GALACTIC_SCALE_FATE_COLOR_ARRAY,
 ].reduce((acc, { key, hex, description }) => {
   acc[key] = {
