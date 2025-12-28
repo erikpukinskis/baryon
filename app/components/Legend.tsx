@@ -7,7 +7,8 @@ import React from "react"
  */
 function camelToTitle(str: string): string {
   return str
-    .replace(/([A-Z])/g, " $1")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
     .replace(/^./, (c) => c.toUpperCase())
     .trim()
 }

@@ -187,6 +187,60 @@ export const GALACTIC_SCALE_FATE_COLOR_ARRAY: FateColor[] = [
 ]
 
 /**
+ * Colors for interstellar-scale fates (pc100 scale) — children of galactic-scale parents.
+ */
+export const INTERSTELLAR_SCALE_FATE_COLOR_ARRAY: FateColor[] = [
+  {
+    key: "diffuseISM",
+    hex: "#1a1a2e",
+    description:
+      "Dark indigo. Ambient interstellar medium — warm/cool atomic gas between active regions.",
+  },
+  {
+    key: "evolvedField",
+    hex: "#4a4a5a",
+    description:
+      "Slate gray. Old field population — long-lived low-mass stars and accumulated remnants.",
+  },
+  {
+    key: "stellarStream",
+    hex: "#5a6a7a",
+    description:
+      "Steel blue. Tidally disrupted cluster stretched into a stream.",
+  },
+  {
+    key: "globularCluster",
+    hex: "#8a7a5a",
+    description:
+      "Amber-brown. Ancient dense cluster — 10+ Gyr old, metal-poor, tightly bound.",
+  },
+  {
+    key: "giantMolecularCloud",
+    hex: "#3a5a4a",
+    description:
+      "Forest green. Active star-forming cloud — cold molecular gas collapsing into stars.",
+  },
+  {
+    key: "openCluster",
+    hex: "#5a8a7a",
+    description:
+      "Teal. Young bound cluster — coeval stellar population, will dissolve over ~100 Myr.",
+  },
+  {
+    key: "superbubble",
+    hex: "#7a5a8a",
+    description:
+      "Dusty purple. Hot cavity carved by supernovae — enriched with heavy elements.",
+  },
+  {
+    key: "HIIRegion",
+    hex: "#aa6a8a",
+    description:
+      "Rose-pink. Ionized gas around massive OB stars — the glow of stellar nurseries.",
+  },
+]
+
+/**
  * The empty fate color — used for cosmic voids and fallback states.
  */
 export const EMPTY_FATE_COLOR = WEB_SCALE_FATE_COLOR_ARRAY[0] // "empty" is first in array
@@ -199,6 +253,7 @@ export const COLORS_BY_KEY = [
   ...WEB_SCALE_FATE_COLOR_ARRAY,
   ...HALO_SCALE_FATE_COLOR_ARRAY,
   ...GALACTIC_SCALE_FATE_COLOR_ARRAY,
+  ...INTERSTELLAR_SCALE_FATE_COLOR_ARRAY,
 ].reduce((acc, { key, hex, description }) => {
   acc[key] = {
     hex,
