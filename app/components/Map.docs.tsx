@@ -32,7 +32,7 @@ export const MapDocs = (
     <h3>Filament</h3>
     <Demo inline>
       <Map
-        childFateWeights={WEB_SCALE_FATES.filament.childFateWeights ?? {}}
+        childFateWeights={WEB_SCALE_FATES.filament.childFateWeights}
         coordinate={{ scale: "Mpc10", x: 5, y: 3 }}
       />
     </Demo>
@@ -42,7 +42,7 @@ export const MapDocs = (
     <h3>Gas-Rich Group</h3>
     <Demo inline>
       <Map
-        childFateWeights={HALO_SCALE_FATES.gasRichGroup.childFateWeights ?? {}}
+        childFateWeights={HALO_SCALE_FATES.gasRichGroup.childFateWeights}
         coordinate={{ scale: "Mpc1", x: 52, y: 37 }}
       />
     </Demo>
@@ -51,7 +51,7 @@ export const MapDocs = (
     <h3>Fossil Group</h3>
     <Demo inline>
       <Map
-        childFateWeights={HALO_SCALE_FATES.fossilGroup.childFateWeights ?? {}}
+        childFateWeights={HALO_SCALE_FATES.fossilGroup.childFateWeights}
         coordinate={{ scale: "Mpc1", x: 54, y: 32 }}
       />
     </Demo>
@@ -59,9 +59,7 @@ export const MapDocs = (
     <h3>Cool-Core Cluster</h3>
     <Demo inline>
       <Map
-        childFateWeights={
-          HALO_SCALE_FATES.coolCoreCluster.childFateWeights ?? {}
-        }
+        childFateWeights={HALO_SCALE_FATES.coolCoreCluster.childFateWeights}
         coordinate={{ scale: "Mpc1", x: 58, y: 31 }}
       />
     </Demo>
@@ -70,9 +68,7 @@ export const MapDocs = (
     <h3>Spiral Galaxy (100×100)</h3>
     <Demo inline>
       <Map
-        childFateWeights={
-          GALACTIC_SCALE_FATES.spiralGalaxy.childFateWeights ?? {}
-        }
+        childFateWeights={GALACTIC_SCALE_FATES.spiralGalaxy.childFateWeights}
         coordinate={{ scale: "kpc100", x: 523, y: 371 }}
         gridSize={100}
         cellSize={4}

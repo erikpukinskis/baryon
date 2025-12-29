@@ -32,7 +32,7 @@ type GalacticScaleFateCharacteristics = {
    * Defines what fraction of child (interstellar) cells have each fate.
    * These weights paint **final outcomes**, not initial states.
    */
-  childFateWeights?: Partial<Record<InterstellarScaleFateKey, number>>
+  childFateWeights: Partial<Record<InterstellarScaleFateKey, number>>
 }
 
 /**

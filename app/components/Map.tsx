@@ -11,7 +11,6 @@ type MapProps = {
   /**
    * The fate weights to sample from when painting child cells.
    * Keys are fate names, values are relative weights (will be normalized).
-   * // TODO add back an example here
    */
   childFateWeights: Partial<Record<string, number>>
 

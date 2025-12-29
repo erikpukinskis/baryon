@@ -10,7 +10,6 @@ import {
 } from "./04_INTERSTELLAR_SCALE_FATES"
 import { STAR_SCALE_FATES, type StarScaleFateKey } from "./05_STAR_SCALE_FATES"
 
-// TODO: Why are we re-exporting these?
 export {
   WEB_SCALE_FATES,
   HALO_SCALE_FATES,
@@ -19,7 +18,6 @@ export {
   STAR_SCALE_FATES,
 }
 
-// TODO: Why are we re-exporting these?
 export type {
   WebScaleFateKey,
   HaloScaleFateKey,
@@ -51,12 +49,13 @@ export type ParentFateKey =
   | GalacticScaleFateKey
   | InterstellarScaleFateKey
 
-// TODO: I wonder about the name "fate with children".... seems like this is just a partial of FateCharacteristics?
 /**
- * Minimal interface for fate characteristics relevant to sampling children.
+ * Minimal interface for fates that can serve as parents in the hierarchy.
+ * Extracted from the full fate characteristics to enable parent fate lookup
+ * without depending on scale-specific types.
  */
 export type FateWithChildren = {
-  childFateWeights?: Partial<Record<string, number>>
+  childFateWeights: Partial<Record<string, number>>
 }
 
 // Build a single lookup map with explicit typing to satisfy ESLint

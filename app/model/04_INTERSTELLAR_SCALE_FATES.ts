@@ -33,7 +33,7 @@ type InterstellarScaleFateCharacteristics = {
    * These weights paint **final outcomes**, not initial states.
    * See AGENTS.md for guidelines on inline comments.
    */
-  childFateWeights?: Partial<Record<StarScaleFateKey, number>>
+  childFateWeights: Partial<Record<StarScaleFateKey, number>>
 }
 
 /**

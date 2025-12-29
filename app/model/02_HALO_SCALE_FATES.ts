@@ -32,7 +32,7 @@ type HaloScaleFateCharacteristics = {
    * Defines what fraction of child (galactic) cells have each fate.
    * These weights paint **final outcomes**, not initial states.
    */
-  childFateWeights?: Partial<Record<GalacticScaleFateKey, number>>
+  childFateWeights: Partial<Record<GalacticScaleFateKey, number>>
 }
 
 /**
