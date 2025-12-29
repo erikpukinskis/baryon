@@ -1,3 +1,5 @@
+import type { HaloScaleFateKey } from "./02_HALO_SCALE_FATES"
+
 export type WebScaleFateKey =
   | "void"
   | "sheet"
@@ -9,25 +11,6 @@ type WebLock =
   | "haloCapture" // matter enters a bound group/cluster halo
   | false
 
-// TODO: Call this HaloScaleFateKey? Already exists somewhere?
-/**
- * Child fates at Mpc1 scale.
- */
-type Mpc1ScaleFateKey =
-  | "unboundAssociation"
-  | "boundGroup"
-  | "gasRichGroup"
-  | "gasPoorGroup"
-  | "fossilGroup"
-  | "infallingGroup"
-  | "protoCluster"
-  | "collapsingCluster"
-  | "relaxedCluster"
-  | "coolCoreCluster"
-  | "mergingCluster"
-  | "fossilCluster"
-  | "empty"
-
 type WebScaleFateCharacteristics = {
   typicalDensityContrast: number // relative to cosmic mean
   dominantBaryonPhase: "plasma"
@@ -38,10 +21,10 @@ type WebScaleFateCharacteristics = {
   allowedTransitions: WebScaleFateKey[]
 
   /**
-   * Defines what fraction of child (Mpc1) parcels have each fate.
+   * Defines what fraction of child (halo-scale) parcels have each fate.
    * See AGENTS.md for guidelines on inline comments.
    */
-  childFateWeights?: Partial<Record<Mpc1ScaleFateKey, number>>
+  childFateWeights?: Partial<Record<HaloScaleFateKey, number>>
 }
 
 /**
@@ -93,8 +76,7 @@ export const WEB_SCALE_FATES: Record<
     allowedTransitions: ["sheet"],
     childFateWeights: {
       empty: 0.9,
-      unboundAssociation: 0.08,
-      boundGroup: 0.02,
+      gasRichGroup: 0.1, // rare isolated groups
     },
   },
 
@@ -107,9 +89,8 @@ export const WEB_SCALE_FATES: Record<
     allowedTransitions: ["filament"],
     childFateWeights: {
       empty: 0.6,
-      unboundAssociation: 0.25,
-      boundGroup: 0.1,
-      gasRichGroup: 0.05,
+      gasRichGroup: 0.35, // early groups forming in walls
+      gasPoorGroup: 0.05,
     },
   },
 
@@ -121,14 +102,12 @@ export const WEB_SCALE_FATES: Record<
     typicalScaleMpc: 2,
     allowedTransitions: ["node", "infallRegion"],
     childFateWeights: {
-      unboundAssociation: 0.25,
-      boundGroup: 0.25,
-      gasRichGroup: 0.2,
-      gasPoorGroup: 0.1,
-      empty: 0.1,
-      protoCluster: 0.05,
-      fossilGroup: 0.03,
-      infallingGroup: 0.02,
+      gasRichGroup: 0.45, // most filament halos are gas-rich groups
+      gasPoorGroup: 0.15,
+      empty: 0.15,
+      coolCoreCluster: 0.1, // some clusters along filaments
+      nonCoolCoreCluster: 0.1,
+      fossilGroup: 0.05,
     },
   },
 
@@ -140,15 +119,12 @@ export const WEB_SCALE_FATES: Record<
     typicalScaleMpc: 1,
     allowedTransitions: ["infallRegion"],
     childFateWeights: {
-      protoCluster: 0.2,
-      collapsingCluster: 0.15,
-      boundGroup: 0.15,
-      gasRichGroup: 0.15,
-      infallingGroup: 0.1,
-      relaxedCluster: 0.1,
-      gasPoorGroup: 0.05,
-      mergingCluster: 0.05,
-      coolCoreCluster: 0.05,
+      coolCoreCluster: 0.35, // nodes are cluster formation sites
+      nonCoolCoreCluster: 0.25,
+      gasRichGroup: 0.15, // infalling groups
+      gasPoorGroup: 0.15,
+      fossilCluster: 0.05,
+      fossilGroup: 0.05,
     },
   },
 
@@ -161,14 +137,12 @@ export const WEB_SCALE_FATES: Record<
     typicalScaleMpc: 1,
     allowedTransitions: [],
     childFateWeights: {
-      infallingGroup: 0.3,
-      collapsingCluster: 0.2,
-      relaxedCluster: 0.15,
-      mergingCluster: 0.1,
-      coolCoreCluster: 0.1,
-      gasPoorGroup: 0.08,
-      fossilGroup: 0.05,
-      fossilCluster: 0.02,
+      nonCoolCoreCluster: 0.35, // merger-heated clusters dominate
+      coolCoreCluster: 0.25,
+      gasPoorGroup: 0.15, // stripped infalling groups
+      fossilCluster: 0.1,
+      fossilGroup: 0.1,
+      gasRichGroup: 0.05, // rare recent infall
     },
   },
 }

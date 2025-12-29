@@ -1,6 +1,7 @@
 import type { GalacticScaleFateKey } from "./03_GALACTIC_SCALE_FATES"
 
 export type HaloScaleFateKey =
+  | "empty"
   | "gasRichGroup"
   | "gasPoorGroup"
   | "fossilGroup"
@@ -69,6 +70,27 @@ export const HALO_SCALE_FATES: Record<
   HaloScaleFateKey,
   HaloScaleFateCharacteristics
 > = {
+  // ═══════════════════════════════════════════════════════════════════════════
+  // EMPTY REGIONS (no collapsed halo)
+  // Deep void regions that will never form bound structures.
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  empty: {
+    // No halo — diffuse intergalactic medium, isolated field dwarfs
+    haloMassMinMsun: 0,
+    haloMassMaxMsun: 1e11, // below group mass threshold
+    gravitationallyBound: false,
+    dominantBaryonPhase: "plasma", // diffuse IGM
+    fateLockedBy: false, // could be captured by expanding halo
+    typicalTimescaleGyr: 10,
+    allowedTransitions: ["gasRichGroup"], // if captured by infall
+    childFateWeights: {
+      diffuseHalo: 0.85, // scattered dark matter, minimal stellar content
+      dwarfIrregular: 0.1, // rare isolated field dwarf
+      dwarfSpheroid: 0.05, // ancient, quenched
+    },
+  },
+
   // ═══════════════════════════════════════════════════════════════════════════
   // GROUP-MASS HALOS (10¹²–10¹³ M☉)
   // Gas can cool and accrete onto galaxies. Star formation continues.

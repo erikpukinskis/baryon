@@ -60,19 +60,14 @@ export const WEB_SCALE_FATE_COLOR_ARRAY: FateColor[] = [
 
 /**
  * Colors for halo-scale fates (Mpc1 scale) — children of web-scale parents.
- * Includes both stable halo fates and transitional states.
+ * These are destination fates, not transitional states.
  */
 export const HALO_SCALE_FATE_COLOR_ARRAY: FateColor[] = [
   {
-    key: "unboundAssociation",
-    hex: "#1a1a2e",
+    key: "empty",
+    hex: "#0a0a12",
     description:
-      "Dark indigo. Loose associations of galaxies not yet gravitationally bound.",
-  },
-  {
-    key: "boundGroup",
-    hex: "#2d3a4a",
-    description: "Steel blue. Gravitationally bound but not yet virialized.",
+      "Near-black. No collapsed halo — diffuse intergalactic medium with rare field dwarfs.",
   },
   {
     key: "gasRichGroup",
@@ -92,35 +87,9 @@ export const HALO_SCALE_FATE_COLOR_ARRAY: FateColor[] = [
       "Sage gray. Single giant elliptical dominates after mergers complete.",
   },
   {
-    key: "infallingGroup",
-    hex: "#6b5a7a",
-    description: "Dusty purple. Groups falling into larger structures.",
-  },
-  {
-    key: "protoCluster",
-    hex: "#4a5a8a",
-    description:
-      "Deep blue-gray. Early cluster formation, multiple groups assembling.",
-  },
-  {
-    key: "collapsingCluster",
-    hex: "#5a4a7a",
-    description: "Violet-gray. Actively collapsing, shocks forming.",
-  },
-  {
-    key: "relaxedCluster",
-    hex: "#8a5a6a",
-    description: "Dusty rose. Virialized but cooling not yet established.",
-  },
-  {
     key: "coolCoreCluster",
     hex: "#9a6a5a",
     description: "Warm copper. Central cooling with AGN feedback equilibrium.",
-  },
-  {
-    key: "mergingCluster",
-    hex: "#aa5a5a",
-    description: "Brick red. Major merger in progress, highly disturbed.",
   },
   {
     key: "nonCoolCoreCluster",
