@@ -10,12 +10,35 @@ import {
 } from "./04_INTERSTELLAR_SCALE_FATES"
 import { STAR_SCALE_FATES, type StarScaleFateKey } from "./05_STAR_SCALE_FATES"
 
+// TODO: Why are we re-exporting these?
+export {
+  WEB_SCALE_FATES,
+  HALO_SCALE_FATES,
+  GALACTIC_SCALE_FATES,
+  INTERSTELLAR_SCALE_FATES,
+  STAR_SCALE_FATES,
+}
+
+// TODO: Why are we re-exporting these?
 export type {
   WebScaleFateKey,
   HaloScaleFateKey,
   GalacticScaleFateKey,
   InterstellarScaleFateKey,
   StarScaleFateKey,
+}
+
+/**
+ * The uniform cosmological background — the statistical distribution of
+ * web-scale structures across the universe. At scales >300 Mpc, all regions
+ * have approximately this same mix.
+ */
+export const COSMOLOGICAL_FATE: Partial<Record<WebScaleFateKey, number>> = {
+  void: 0.6, // Voids dominate by volume
+  sheet: 0.2, // Walls between voids
+  filament: 0.15, // The "highways"
+  node: 0.04, // Rare dense intersections
+  infallRegion: 0.01, // Already captured into halos
 }
 
 /**

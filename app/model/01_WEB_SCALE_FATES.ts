@@ -24,7 +24,7 @@ type WebScaleFateCharacteristics = {
    * Defines what fraction of child (halo-scale) parcels have each fate.
    * See AGENTS.md for guidelines on inline comments.
    */
-  childFateWeights?: Partial<Record<HaloScaleFateKey, number>>
+  childFateWeights: Partial<Record<HaloScaleFateKey, number>>
 }
 
 /**
