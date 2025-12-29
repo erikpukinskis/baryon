@@ -4,7 +4,7 @@
     {
       "label": "TypeScript Watch",
       "type": "typescript",
-      "tsconfig": "tsconfig.check.json",
+      "tsconfig": "tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
