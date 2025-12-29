@@ -33,27 +33,27 @@ export const WEB_SCALE_FATE_COLOR_ARRAY: FateColor<WebScaleFateKey>[] = [
   },
   {
     key: "sheet",
-    hex: "#1a1a2e",
+    hex: "#2e1a3a",
     description:
-      "Dark blue-gray. Weak overdensities, the walls between voids where early groups form.",
+      "Dark plum. Weak overdensities, the walls between voids where early groups form.",
   },
   {
     key: "filament",
-    hex: "#2d3a4a",
+    hex: "#1a5a6a",
     description:
-      "Steel blue. Matter transport corridors connecting nodes, where groups and clusters form.",
+      "Deep teal. Matter transport corridors connecting nodes, where groups and clusters form.",
   },
   {
     key: "node",
-    hex: "#4a5568",
+    hex: "#8a6a3a",
     description:
-      "Slate gray. Filament intersections where clusters form — the densest web-scale structures.",
+      "Warm amber. Filament intersections where clusters form — the densest web-scale structures.",
   },
   {
     key: "infallRegion",
-    hex: "#6b7280",
+    hex: "#9a5a6a",
     description:
-      "Warm gray. Terminal state — matter captured into bound halos, no longer part of the free web.",
+      "Dusty rose. Terminal state — matter captured into bound halos, no longer part of the free web.",
   },
 ]
 

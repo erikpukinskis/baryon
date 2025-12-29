@@ -219,13 +219,15 @@ export function getFateCharacteristics(
  * differently** relative to their parent. This allows a tree of 2D simulations
  * to fill a 3D volume:
  *
- *   Milky Way (disk plane, galactic scale) ├── Orion Molecular Cloud Complex
+ *   Milky Way (disk plane, galactic scale)
+ *   ├── Orion Molecular Cloud Complex
+ *   │   ├── Orion Nebula Cluster
+ *   │   ├── Young stellar systems (tilted to cluster plane)
+ *   │   └── Barnard's Loop (superbubble, aligned)
+ *   ├── Local Bubble (superbubble containing Sol)
+ *   │   └── Sol system (stellar scale, tilted 60° to galactic plane)
+ *   └── Sagittarius Dwarf (satellite galaxy, oriented 90° to disk)
  *     (interstellar scale, aligned with disk) │     ├── Orion Nebula Cluster
- *     (open cluster within GMC) │     │     └── Young stellar systems (tilted
- *     to cluster plane) │     └── Barnard's Loop (superbubble, aligned) ├──
- *     Local Bubble (superbubble containing Sol) │     └── Sol system (stellar
- *     scale, tilted 60° to galactic plane) └── Sagittarius Dwarf (satellite
- *     galaxy, oriented 90° to disk)
  *
  * Each node simulates in its own 2D plane. The tree of orientations recovers 3D
  * structure when needed. For the game's spreadsheet UI, the player typically
