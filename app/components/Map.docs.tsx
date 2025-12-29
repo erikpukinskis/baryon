@@ -18,7 +18,7 @@ import {
 export const MapDocs = (
   <Doc path="/Components/Map">
     <h2>Cosmological Scale (1000×1000)</h2>
-    <Demo only inline>
+    <Demo inline>
       <Map
         childFateWeights={COSMOLOGICAL_FATE}
         coordinate={{ scale: "Mpc10", x: 0, y: 0 }}
