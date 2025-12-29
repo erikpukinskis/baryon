@@ -78,6 +78,10 @@ import {
 } from "~/helpers/noise"
 import type { Coordinates, ScaleKey } from "~/model"
 import {
+  WEB_SCALE_FATES,
+  type WebScaleFateKey,
+} from "~/model/01_WEB_SCALE_FATES"
+import {
   HALO_SCALE_FATES,
   type HaloScaleFateKey,
 } from "~/model/02_HALO_SCALE_FATES"
@@ -221,12 +225,45 @@ function seededRandom(seed: number): number {
 }
 
 /**
+ * Observe the web-scale fate at the given Mpc10 coordinates.
+ *
+ * Uses Perlin noise to sample from the cosmological distribution of
+ * web-scale structures (voids, sheets, filaments, nodes, infall regions).
+ */
+function observeWebFate(
+  coords: Coordinates,
+  universeSeed: number
+): WebScaleFateKey {
+  const mpc10 = coords.Mpc10
+
+  if (!mpc10) {
+    throw new Error("Mpc10 coordinates required to observe web fate")
+  }
+
+  // Use the universe seed as the base for the cosmological field
+  const noiseValue = perlin2d(mpc10[0], mpc10[1], universeSeed)
+
+  // Use the cosmological distribution of web-scale structures
+  const cosmologicalWeights: Partial<Record<WebScaleFateKey, number>> = {
+    void: 0.6, // Voids dominate by volume
+    sheet: 0.2, // Walls between voids
+    filament: 0.15, // The "highways"
+    node: 0.04, // Rare dense intersections
+    infallRegion: 0.01, // Already captured into halos
+  }
+
+  const { keys, thresholds } = computeThresholds(cosmologicalWeights)
+  return sampleFromThresholds(noiseValue, keys, thresholds)
+}
+
+/**
  * Observe the halo-scale fate at the given Mpc1 coordinates.
  *
- * Uses Perlin noise to sample from the space of halo fates.
- * For now, uses a uniform distribution (all halo fates equally likely).
- *
- * TODO: Use parent (Mpc10) web-scale fate to constrain halo fate weights.
+ * Uses Perlin noise to sample from the parent's childFateWeights:
+ *   1. First observe the parent (Mpc10) to get its web-scale fate
+ *   2. Look up the parent's childFateWeights
+ *   3. Generate Perlin noise at the Mpc1 coordinates
+ *   4. Apply thresholds to get the categorical fate
  */
 function observeHaloFate(
   coords: Coordinates,
@@ -239,24 +276,27 @@ function observeHaloFate(
     throw new Error("Mpc1 and Mpc10 coordinates required to observe halo fate")
   }
 
-  // Compute a seed for this Mpc1 tile based on its absolute position
-  const tileSeed = universeSeed + mpc10[0] * 1000 + mpc10[1] * 100
+  // First, observe the parent's web-scale fate
+  const parentFate = observeWebFate(coords, universeSeed)
+  const parentCharacteristics = WEB_SCALE_FATES[parentFate]
+
+  // Get the parent's childFateWeights
+  const weights = parentCharacteristics.childFateWeights
+
+  if (!weights || Object.keys(weights).length === 0) {
+    // Fallback: if no weights defined, return empty
+    return "empty" as HaloScaleFateKey
+  }
+
+  // Compute a seed for this Mpc10 tile (for the halo-scale noise field)
+  // This ensures all Mpc1 cells in the same Mpc10 tile share a coherent field
+  const tileSeed = universeSeed * 7 + mpc10[0] * 1000 + mpc10[1] * 100
 
   // Sample Perlin noise at the Mpc1 position within the Mpc10 tile
   const noiseValue = perlin2d(mpc1[0], mpc1[1], tileSeed)
 
-  // For now, use uniform weights across all halo fates
-  // TODO: Get weights from parent (web-scale) fate
-  const uniformWeights: Partial<Record<HaloScaleFateKey, number>> = {
-    gasRichGroup: 0.25,
-    gasPoorGroup: 0.25,
-    fossilGroup: 0.1,
-    coolCoreCluster: 0.15,
-    nonCoolCoreCluster: 0.15,
-    fossilCluster: 0.1,
-  }
-
-  const { keys, thresholds } = computeThresholds(uniformWeights)
+  // Convert weights to thresholds and sample
+  const { keys, thresholds } = computeThresholds(weights)
   return sampleFromThresholds(noiseValue, keys, thresholds)
 }
 
