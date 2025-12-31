@@ -1,3 +1,7 @@
+import {
+  BARYON_COOLING_REGIMES,
+  type BaryonicCoolingRegimeKey,
+} from "./00_BARYON_COOLING_REGIMES"
 import { WEB_SCALE_FATES, type WebScaleFateKey } from "./01_WEB_SCALE_FATES"
 import { HALO_SCALE_FATES, type HaloScaleFateKey } from "./02_HALO_SCALE_FATES"
 import {
@@ -11,6 +15,7 @@ import {
 import { STAR_SCALE_FATES, type StarScaleFateKey } from "./05_STAR_SCALE_FATES"
 
 export {
+  BARYON_COOLING_REGIMES,
   WEB_SCALE_FATES,
   HALO_SCALE_FATES,
   GALACTIC_SCALE_FATES,
@@ -19,6 +24,7 @@ export {
 }
 
 export type {
+  BaryonicCoolingRegimeKey,
   WebScaleFateKey,
   HaloScaleFateKey,
   GalacticScaleFateKey,
@@ -30,14 +36,12 @@ export type {
  * The uniform cosmological background — the statistical distribution of
  * web-scale structures across the universe. At scales >300 Mpc, all regions
  * have approximately this same mix.
+ *
+ * NOTE: This is now derived from BARYON_COOLING_REGIMES.recombinedGas.childFateWeights.
+ * Kept here for backward compatibility with existing code.
  */
-export const COSMOLOGICAL_FATE: Partial<Record<WebScaleFateKey, number>> = {
-  void: 0.6, // Voids dominate by volume
-  sheet: 0.2, // Walls between voids
-  filament: 0.15, // The "highways"
-  node: 0.04, // Rare dense intersections
-  infallRegion: 0.01, // Already captured into halos
-}
+export const COSMOLOGICAL_FATE: Partial<Record<WebScaleFateKey, number>> =
+  BARYON_COOLING_REGIMES.recombinedGas.childFateWeights
 
 /**
  * Union of all fate keys that have childFateWeights.
@@ -257,6 +261,16 @@ export function getFateCharacteristics(
  */
 export const SCALES = {
   /**
+   * 100x100 Mpc grid: early-universe thermal regimes
+   * Parent of web-scale structure. Each cell is internally homogeneous but
+   * cells differ in density contrast, temperature trajectory, etc.
+   * Regimes are reversible (not locked fates).
+   */
+  Mpc100: {
+    regimes: { BARYON_COOLING_REGIMES },
+  },
+
+  /**
    * 10x10 Mpc grid: cosmic web geometry
    */
   Mpc10: {
@@ -367,6 +381,7 @@ export const SCALE_ORDER: ScaleKey[] = [
   "kpc100",
   "Mpc1",
   "Mpc10",
+  "Mpc100",
 ]
 
 /**
@@ -384,7 +399,8 @@ export const SCALE_WIDTH: Record<ScaleKey, number> = {
   pc100: 1000, // 1000 pc100 per kpc100
   kpc100: 10, // 10 kpc100 per Mpc1
   Mpc1: 10, // 10 Mpc1 per Mpc10
-  Mpc10: 1000, // 1000×1000 grid covers 10,000 Mpc — plenty for observable universe
+  Mpc10: 10, // 10 Mpc10 per Mpc100 (100 Mpc = 10 × 10 Mpc cells)
+  Mpc100: 1000, // 1000×1000 grid covers 100,000 Mpc — well beyond observable universe
 }
 
 /**
