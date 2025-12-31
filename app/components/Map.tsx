@@ -1,6 +1,9 @@
 import React, { useRef, useEffect } from "react"
 import { COLORS_BY_KEY, EMPTY_FATE_COLOR } from "~/helpers/colors"
-import { generateDefaultField, rayMarchFromAbove } from "~/helpers/wavelets"
+import {
+  generateDefaultField,
+  rayMarchFromAbove,
+} from "~/helpers/sparseFourier"
 import type { Coordinate } from "~/model"
 
 type MapProps = {
