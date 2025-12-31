@@ -2,31 +2,23 @@ import { Demo, Doc } from "codedocs/macro"
 import React from "react"
 import { Legend } from "./Legend"
 import { Map } from "./Map"
-import {
-  GALACTIC_SCALE_FATE_COLOR_ARRAY,
-  HALO_SCALE_FATE_COLOR_ARRAY,
-  INTERSTELLAR_SCALE_FATE_COLOR_ARRAY,
-  WEB_SCALE_FATE_COLOR_ARRAY,
-} from "~/helpers/colors"
-import {
-  COSMOLOGICAL_FATE,
-  GALACTIC_SCALE_FATES,
-  HALO_SCALE_FATES,
-  WEB_SCALE_FATES,
-} from "~/model"
+import { WEB_SCALE_FATE_COLOR_ARRAY } from "~/helpers/colors"
+import { COSMOLOGICAL_FATE } from "~/model"
 
 export const MapDocs = (
   <Doc path="/Components/Map">
-    <h2>Cosmological Scale (1000×1000)</h2>
+    <h2>BAO Scale (100×100)</h2>
     <Demo inline>
       <Map
         childFateWeights={COSMOLOGICAL_FATE}
         coordinate={{ scale: "Mpc10", x: 0, y: 0 }}
-        gridSize={1000}
-        cellSize={0.5}
+        gridSize={100}
+        cellSize={5}
       />
     </Demo>
     <Legend colors={WEB_SCALE_FATE_COLOR_ARRAY} />
+
+    {/* TODO: Re-enable other scale demos after Fourier-based rendering is working
 
     <h2>Web-scale Parcels</h2>
     <h3>Filament</h3>
@@ -75,5 +67,7 @@ export const MapDocs = (
       />
     </Demo>
     <Legend colors={INTERSTELLAR_SCALE_FATE_COLOR_ARRAY} />
+
+    */}
   </Doc>
 )
